@@ -1,6 +1,7 @@
 const events = require('events');
 const util = require('util');
 
+/********************** OUTPUT PORT ****************************/
 function OutputPort() {
 	events.EventEmitter.call(this)
 	this.value = 0.0;
@@ -8,11 +9,6 @@ function OutputPort() {
 };
 
 util.inherits(OutputPort, events.EventEmitter);
-
-OutputPort.prototype.increment = function() {
-	this.value += 1;
-	this.emit("value", this.value);
-};
 
 OutputPort.prototype.update = function(newValue) {
 	this.value = newValue;
@@ -24,6 +20,7 @@ OutputPort.prototype.connect = function(inputPort) {
 }
 
 OutputPort.prototype.registerConnection = function(connectionId, inputPort) {
+  console.log("Register connection " + connectionId);
 	this.outputDestinations[connectionId] = inputPort;
 }
 
@@ -37,6 +34,7 @@ OutputPort.prototype.disconnect = function(connectionId) {
 	destination.disconnect(connectionId);
 }
 
+/********************** INPUT PORT ****************************/
 function InputPort(callback, aggregation) {
 	this.callback = callback;
 	this.inputs = {};
@@ -67,6 +65,7 @@ InputPort.prototype.disconnect = function(connectionId) {
 }
 
 InputPort.prototype.newValue = function(connectionId, newValue) {
+  //console.log("Inputport value " + connectionId + ": " + newValue)
 	if (this.aggregation == "latest"){
 		resultValue = newValue
 	} else {
@@ -81,13 +80,43 @@ InputPort.prototype.newValue = function(connectionId, newValue) {
 	}
 }
 
+/********************** DEVICE ****************************/
 
-
-function Device() {
+function Device(showmaster) {
 	this.inputPorts = {};
 	this.outputPorts = {};
+  this.showmaster = showmaster;
   this.id = Device.prototype.nextDeviceId;
+  console.log("Registering device " + this.id);
+  
+  this.showmaster.devices[this.id] = this;
   Device.prototype.nextDeviceId += 1;
+}
+
+Device.prototype.nextDeviceId = 0;
+
+/* Connects the outputport of this device to the inputport of the otherdevice */
+Device.prototype.connectTo = function(outputPortName, otherDeviceId, otherPortName) {
+  outputPort = this.outputPorts[outputPortName];
+  if (outputPort == undefined) {console.log("ct ouputPort " + outputPortName + " not found"); return 1;}
+  otherDevice = this.showmaster.getDevice(otherDeviceId);
+  if (otherDevice == undefined) {console.log("ct device " + otherDeviceId + " not found"); return 1;}
+  otherPort = otherDevice.inputPorts[otherPortName];
+  if (otherPort == undefined) {console.log("ct inputPort " + otherPortName + " not found"); return 1;}
+  outputPort.connect(otherPort);
+  return 0
+}
+
+/* Connects the inputport of this device to the outputport of the otherdevice */
+Device.prototype.connectFrom = function(inputPortName, otherDeviceId, otherPortName) {
+  inputPort = this.inputPorts[inputPortName];
+  if (inputPort == undefined) {console.log("cf inputPort " + inputPortName + " not found"); return 1;}
+  otherDevice = this.showmaster.getDevice(otherDeviceId);
+  if (otherDevice == undefined) {console.log("cf device " + otherDeviceId + " not found"); return 1;}
+  otherPort = otherDevice.outputPorts[otherPortName];
+  if (otherPort == undefined) {console.log("cf outputPort " + otherPortName + " not found"); return 1;}
+  otherPort.connect(inputPort);
+  return 0;
 }
 
 Device.prototype.nextDevice = 0;
@@ -104,8 +133,9 @@ Device.prototype.newValue = function(portName, value) {
 	
 }
 
-function Dimmer() {
-	Device.call(this)
+/********************** DIMMER DEVICE ****************************/
+function Dimmer(showmaster) {
+	Device.call(this, showmaster)
 	this.addInputPort("intensity");
 	this.addInputPort("input");
 	this.addOutputPort("output");
@@ -119,71 +149,86 @@ Dimmer.prototype.newValue = function(portName, value) {
 	var intensity = this.inputPorts["intensity"].lastValue;
 	var input = this.inputPorts["input"].lastValue;
 	var outputValue = intensity * input;
-	this.outputPorts["output"].update(outputValue);
+ 	this.outputPorts["output"].update(outputValue);
 }
 
-function ShowMaster() {
-	events.EventEmitter.call(this)
-	mycallback = function(newValue) {
-		this.emit("value", newValue);
-	}.bind(this);
-
-	mydimmer = new Dimmer();
-	
-	//dummy port to receive output from dimmer
-	myresult  = new InputPort(mycallback, "latest");
-	
-	//get the dimmer ports
-	dimmerintensity = mydimmer.inputPorts["intensity"];
-	dimmerinput = mydimmer.inputPorts["input"];
-	
-	//dummy ports to provide input to dimmer
-	this.dummyIntensity = new OutputPort();
-	this.dummyInput = new OutputPort();
-	
-	// link up the dimmer with dummyports
-	this.dummyIntensity.connect(mydimmer.inputPorts["intensity"]);
-	this.dummyInput.connect(mydimmer.inputPorts["input"]);
-	myresult.connect(mydimmer.outputPorts["output"]);
-
-	// initial inputs
-	this.dummyIntensity.update(0);
-	this.dummyInput.update(0);
-	
-
-}
-util.inherits(ShowMaster, events.EventEmitter);
-
-function setupServer(showMaster) {
+/********************** SOCKIO DEVICE ****************************/
+function SockioDevice(showmaster) {
+	Device.call(this, showmaster)
 	var express  = require('express');
 	var app = express();
 	var http = require('http').Server(app);
-	var io = require('socket.io')(http);
-
+	this.io = require('socket.io')(http);
 	app.use(express.static(__dirname + "/www"));
 
-	showMaster.on("value", function(value) {
-		io.emit("output", value);
-	})	
-
-	io.on('connection', function(socket){
+	this.io.on('connection', function(socket){
 	  console.log('a user connected');
 	  socket.on('disconnect', function(){
 	     console.log('user disconnected');
 	   });
 		 
-		socket.on("input1", function(v) {
-			showMaster.dummyIntensity.update(v / 100);
-		})
-		socket.on("input2", function(v) {
-			showMaster.dummyInput.update(v / 100);
-		})
-	});
+		socket.on("input", function(message) {
+      console.log(" << " , message);
+      outputPort = this.outputPorts[message['port']]
+      if (outputPort != undefined) {
+        outputPort.update( message["value"]);
+      }else {
+        console.log("Input for undefined outputport " + message['port'])
+      };
+		}.bind(this))
+	}.bind(this));
 
 	http.listen(3000, function(){
 	  console.log('listening on *:3000');
 	});
 }
 
+util.inherits(SockioDevice, Device);
+
+// this sets up some connections to a mixer device for testing
+// In the future, these ports are created and connected by api calls
+SockioDevice.prototype.setupTestConnections = function() {
+  // create an outputport on this device
+  this.addOutputPort("output1");
+  // send the data to the input port of the mixer device
+  this.connectTo("output1", 0, "input");
+  // create an outputport on this device
+  this.addOutputPort("output2");
+  // send the data to the intensity port of the mixer device
+  this.connectTo("output2", 0, "intensity");
+  // create an input port of this device
+  this.addInputPort("input1");
+  // retrieve the data from the mixer output port
+  this.connectFrom("input1", 0, "output");
+}
+
+SockioDevice.prototype.newValue = function(portName, value) {
+  var message = {
+      "port": portName, 
+      "value": value
+    };
+  console.log(" >> " , message);
+ 	this.io.emit("output", message);
+}
+
+
+
+/********************** SHOWMASTER ****************************/
+function ShowMaster() {
+	events.EventEmitter.call(this)
+  this.devices = {}
+  
+  new Dimmer(this);
+	sockio = new SockioDevice(this);
+  sockio.setupTestConnections();
+}
+
+util.inherits(ShowMaster, events.EventEmitter);
+
+ShowMaster.prototype.getDevice = function(deviceId) {
+  return this.devices[deviceId];
+}
+/********************** INITIALIZE ****************************/
+
 showMaster = new ShowMaster();
-setupServer(showMaster);
+
