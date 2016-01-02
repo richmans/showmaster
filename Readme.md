@@ -15,3 +15,11 @@ Showmaster provides a number of predefined devices.
 
 ## License
 This work is licensed under the [MIT license](https://tldrlegal.com/license/mit-license)
+
+## Installation
+Assuming you have nodejs installed on osx or linux:
+
+    git clone https://github.com/richmans/showmaster.git
+    cd showmaster
+    npm install . -g
+    showmaster

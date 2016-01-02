@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const events = require('events');
 const util = require('util');
 
