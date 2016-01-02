@@ -1,0 +1,19 @@
+{
+  "name": "showmaster",
+  "version": "0.0.1",
+  "description": "Processor for realtime events in lights and music.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "realtime",
+    "dmx"
+  ],
+  "author": "Richard Bronkhorst",
+  "license": "Creative Commons CC BY 4.0",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^1.3.7"
+  }
+}
