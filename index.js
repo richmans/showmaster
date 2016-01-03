@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const events = require('events');
 const util = require('util');
+const FTDI = require('ftdi')
 
 /********************** OUTPUT PORT ****************************/
 function OutputPort() {

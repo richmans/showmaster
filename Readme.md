@@ -5,6 +5,20 @@ Showmaster is a framework for DMX controllers written in nodejs. Showmaster allo
 
 The goal is to have a service that runs on a computer with a DMX connector, that acts as a programmable DMX controller. 
 
+
+## FTDI
+I had a little trouble getting the ftdi library to work with the latest nodejs (0.12). It wouldn't install by default, but i found a git branch that works for me. You have to install it manually. I placed it in a directory next to showmaster:
+
+* git clone https://github.com/komola/node-ftdi.git
+* cd node-ftdi
+* git checkout nan
+* ./install.sh
+* cd ../showmaster
+* npm install ../node-ftdi
+* PROFIT
+
+If this method doesn't work for you. Please don't come complaining to me, complain to the node-ftdi guys.
+
 ## Predefined devices
 Showmaster provides a number of predefined devices. 
 

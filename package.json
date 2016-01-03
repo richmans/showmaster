@@ -16,10 +16,11 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.13.3",
+    "ftdi": "file:../node-ftdi",
     "socket.io": "^1.3.7"
   },
-  "repository" :
-    { "type" : "git"
-    , "url" : "https://github.com/richmans/showmaster.git"
-    }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/richmans/showmaster.git"
+  }
 }
