@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const events = require('events');
 const util = require('util');
-const FTDI = require('ftdi')
+const SerialPort = require("serialport").SerialPort
 
 /********************** OUTPUT PORT ****************************/
 function OutputPort() {
@@ -154,6 +154,56 @@ Dimmer.prototype.newValue = function(portName, value) {
  	this.outputPorts["output"].update(outputValue);
 }
 
+/********************** DMX DEVICE ****************************/
+function DmxOutputDevice(showmaster, device) {
+  Device.call(this, showmaster)
+  for(var i = 0; i<512 ; i++) {
+    this.addInputPort(i.toString());
+  }
+  this.startSerial(device);
+	
+}
+
+util.inherits(DmxOutputDevice, Device);
+
+DmxOutputDevice.prototype.startSerial = function(device) {
+  this.serialPort = new SerialPort(device, {
+    baudrate: 57600,
+    databits: 8,
+    stopbits: 2,
+  });
+  this.serialPort.on("open", this.startOutput.bind(this));
+  this.serialPort.on("close", this.stopOutput.bind(this));
+  this.serialPort.on("error", this.error.bind(this));
+  
+  this.universe = new Buffer(512)
+	this.universe.fill(0)
+}
+
+DmxOutputDevice.prototype.error = function(e) {
+  console.log("Error opening dmx output (Device " + this.id + " will act as dummy): " + e);
+}
+
+DmxOutputDevice.prototype.startOutput = function() {
+  console.log("Starting DMX output on device " + this.id);
+  this.interval = setInterval(this.writeUniverse.bind(this), 50);
+}
+
+DmxOutputDevice.prototype.stopOutput = function() {
+  clearInterval(this.interval);
+}
+
+DmxOutputDevice.prototype.writeUniverse = function() {
+  this.serialPort.write(this.universe, function(err, results) {
+    console.log('err ' + err);
+    console.log('results ' + results);
+  });
+}
+
+DmxOutputDevice.prototype.newValue = function(portName, value) {
+  this.universe[parseInt(portName)] = value;
+}
+
 /********************** SOCKIO DEVICE ****************************/
 function SockioDevice(showmaster) {
 	Device.call(this, showmaster)
@@ -240,8 +290,16 @@ function ShowMaster() {
 	events.EventEmitter.call(this)
   this.devices = {}
   
-  new Dimmer(this);
-	sockio = new SockioDevice(this);
+  // Following section is a test setup. This should be read from
+  // some input file: json or database
+  dimmer = new Dimmer(this);
+  dmx = new DmxOutputDevice(this, "/dev/tty-usbserial1");
+  // setup test connection from dimmer output to channel 2  of the dmx
+  dimmer.connectTo("output", 2, "1");
+
+  sockio = new SockioDevice(this);
+	// sockio device will be configured either through api or config
+  // for now, we hook it up to all the ports of the dimmer device
   sockio.setupTestConnections();
 }
 
