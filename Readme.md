@@ -16,6 +16,9 @@ Showmaster provides a number of predefined devices.
 ## License
 This work is licensed under the [MIT license](https://tldrlegal.com/license/mit-license)
 
+## FTDI
+I had a little trouble getting the ftdi library to work with the latest nodejs (0.12). It wouldn't install by default, but i found a git branch that works, forked it and added some functionality. It should install automatically.
+
 ## Installation
 Assuming you have nodejs installed on osx or linux:
 

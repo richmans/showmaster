@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const events = require('events');
 const util = require('util');
-const SerialPort = require("serialport").SerialPort
+const ftdi = require('ftdi');
 
 /********************** OUTPUT PORT ****************************/
 function OutputPort() {
@@ -69,7 +69,10 @@ InputPort.prototype.disconnect = function(connectionId) {
 InputPort.prototype.newValue = function(connectionId, newValue) {
   //console.log("Inputport value " + connectionId + ": " + newValue)
 	if (this.aggregation == "latest"){
-		resultValue = newValue
+		resultValue = newValue;
+  } else if (this.aggregation == "all") {
+    this.callback(resultValue);
+    return;
 	} else {
 		resultValue = this.inputs[connectionId] = newValue;
 		for (id in this.inputs) { 
@@ -87,6 +90,7 @@ InputPort.prototype.newValue = function(connectionId, newValue) {
 function Device(showmaster) {
 	this.inputPorts = {};
 	this.outputPorts = {};
+  this.attributes = {};
   this.showmaster = showmaster;
   this.id = Device.prototype.nextDeviceId;
   console.log("Registering device " + this.id);
@@ -97,6 +101,19 @@ function Device(showmaster) {
 
 Device.prototype.nextDeviceId = 0;
 
+Device.prototype.set = function(name, value) {
+  this.attributes[name] = value
+  this.updateAttribute(name);
+}
+
+Device.prototype.get = function(name) {
+  return this.attributes[name]
+}
+
+// called when an attribute is updated. Override in subclasses
+Device.prototype.updateAttribute = function(name) {
+  
+}
 /* Connects the outputport of this device to the inputport of the otherdevice */
 Device.prototype.connectTo = function(outputPortName, otherDeviceId, otherPortName) {
   outputPort = this.outputPorts[outputPortName];
@@ -154,39 +171,96 @@ Dimmer.prototype.newValue = function(portName, value) {
  	this.outputPorts["output"].update(outputValue);
 }
 
+/********************** LOOPER DEVICE ****************************/
+function LooperDevice(showmaster) {
+  Device.call(this, showmaster);
+  this.set("numOutputs", 3);
+  this.index = 0;
+  this.createdOutputs = 0;
+  this.addInputPort("input")
+  this.inputPorts["input"].aggregation = "all";
+}
+
+util.inherits(LooperDevice, Device);
+
+LooperDevice.prototype.updateAttribute = function(name) {
+  
+  if (name == "numOutputs") {
+    desiredOutputs = this.get("numOutputs");
+    while (desiredOutputs > this.createdOutputs) {
+      console.log("Adding looper output " + this.createdOutputs);
+      this.addOutputPort(this.createdOutputs);
+      this.createdOutputs += 1;
+    }
+    this.maxOutput = desiredOutputs;
+  }
+}
+
+LooperDevice.prototype.newValue = function(name, value) {
+  this.outputPorts[this.index.toString()].update(0);
+  this.index += 1;
+  if (this.index >= this.maxOutput) this.index = 0;
+  this.outputPorts[this.index.toString()].update(1);
+}
+
+/********************** TIMER DEVICE ****************************/
+function TimerDevice(showmaster) {
+  Device.call(this, showmaster);
+  this.addInputPort("frequency");
+  this.addOutputPort("output");
+}
+
+util.inherits(TimerDevice, Device);
+
+TimerDevice.prototype.newValue = function(portName, value) {
+	if (portName == "frequency") {
+    if(this.interval != null) clearInterval(this.interval);
+    // value 0 turns the timer off
+    if (value == 0) return;
+	  var frequency = value * 10 // max 10 hz
+    var delay = 1000 / frequency;
+    this.interval = setInterval(this.beep.bind(this), delay);
+	}
+}
+
+TimerDevice.prototype.beep = function() {
+  this.outputPorts["output"].update(1);
+}
 /********************** DMX DEVICE ****************************/
-function DmxOutputDevice(showmaster, device) {
+function DmxOutputDevice(showmaster) {
   Device.call(this, showmaster)
   for(var i = 0; i<512 ; i++) {
     this.addInputPort(i.toString());
   }
-  this.startSerial(device);
+  this.startSerial();
 	
 }
 
 util.inherits(DmxOutputDevice, Device);
 
-DmxOutputDevice.prototype.startSerial = function(device) {
-  this.serialPort = new SerialPort(device, {
-    baudrate: 57600,
+DmxOutputDevice.prototype.startSerial = function() {
+  this.universe = new Buffer(513, "binary")
+	this.universe.fill(0)
+  console.log("Starting ftdi port");
+  this.device = new ftdi.FtdiDevice(0);
+  this.device.on('error', this.error.bind(this));
+  this.device.open({
+    baudrate: 250000,
     databits: 8,
     stopbits: 2,
-  });
-  this.serialPort.on("open", this.startOutput.bind(this));
-  this.serialPort.on("close", this.stopOutput.bind(this));
-  this.serialPort.on("error", this.error.bind(this));
-  
-  this.universe = new Buffer(512)
-	this.universe.fill(0)
+    parity: 'none',
+  },
+  this.startOutput.bind(this));
+
 }
 
 DmxOutputDevice.prototype.error = function(e) {
   console.log("Error opening dmx output (Device " + this.id + " will act as dummy): " + e);
 }
 
-DmxOutputDevice.prototype.startOutput = function() {
-  console.log("Starting DMX output on device " + this.id);
-  this.interval = setInterval(this.writeUniverse.bind(this), 50);
+DmxOutputDevice.prototype.startOutput = function(err) {
+  console.log("Starting DMX output on device " + this.id + ".");
+  this.interval = setInterval(this.writeUniverse.bind(this), 30);
 }
 
 DmxOutputDevice.prototype.stopOutput = function() {
@@ -194,14 +268,19 @@ DmxOutputDevice.prototype.stopOutput = function() {
 }
 
 DmxOutputDevice.prototype.writeUniverse = function() {
-  this.serialPort.write(this.universe, function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
-  });
+  // this is a great example of why js is not my favorite language
+  this.device.setBreak(function() {
+      this.device.clearBreak(function() {
+          this.device.write(this.universe);
+      }.bind(this));
+
+  }.bind(this));
+  //console.log(this.universe);  
 }
 
 DmxOutputDevice.prototype.newValue = function(portName, value) {
-  this.universe[parseInt(portName)] = value;
+  //console.log("DMX port " + portName + " to value " + value * 255);
+  this.universe[parseInt(portName)+1] = value * 255;
 }
 
 /********************** SOCKIO DEVICE ****************************/
@@ -262,6 +341,8 @@ SockioDevice.prototype.setupTestConnections = function() {
   this.addInputPort("input1");
   // retrieve the data from the mixer output port
   this.connectFrom("input1", 0, "output");
+  // add an extra output port
+  this.addOutputPort("output3");
 }
 
 
@@ -293,14 +374,26 @@ function ShowMaster() {
   // Following section is a test setup. This should be read from
   // some input file: json or database
   dimmer = new Dimmer(this);
-  dmx = new DmxOutputDevice(this, "/dev/tty-usbserial1");
-  // setup test connection from dimmer output to channel 2  of the dmx
-  dimmer.connectTo("output", 2, "1");
-
   sockio = new SockioDevice(this);
-	// sockio device will be configured either through api or config
+  dmx = new DmxOutputDevice(this);
+  timer = new TimerDevice(this);
+  looper = new LooperDevice(this);
+  looper.set("numOutputs", 4);
+  
+  // sockio device will be configured either through api or config
   // for now, we hook it up to all the ports of the dimmer device
   sockio.setupTestConnections();
+  
+  // setup test connection from dimmer output to channel 2  of the dmx
+  dimmer.connectTo("output", dmx.id, "1");
+  
+  // Set up the looper to loop channels 3 through 6
+  timer.connectTo("output", looper.id, "input");
+  looper.connectTo("0", dmx.id, "2");
+  looper.connectTo("1", dmx.id, "3");
+  looper.connectTo("2", dmx.id, "4");
+  looper.connectTo("3", dmx.id, "5");
+  timer.connectFrom("frequency", sockio.id, "output3");
 }
 
 util.inherits(ShowMaster, events.EventEmitter);

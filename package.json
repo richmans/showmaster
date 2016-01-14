@@ -16,7 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.13.3",
-    "serialport": "^2.0.5",
+    "ftdi": "https://github.com/richmans/node-ftdi.git#nan",
     "socket.io": "^1.3.7"
   },
   "repository": {
