@@ -3,87 +3,8 @@ const events = require('events');
 const util = require('util');
 const ftdi = require('ftdi');
 
-/********************** OUTPUT PORT ****************************/
-function OutputPort() {
-	events.EventEmitter.call(this)
-	this.value = 0.0;
-	this.outputDestinations = {}
-};
-
-util.inherits(OutputPort, events.EventEmitter);
-
-OutputPort.prototype.update = function(newValue) {
-	this.value = newValue;
-	this.emit("value", this.value);
-}
-
-OutputPort.prototype.connect = function(inputPort) {
-	connectionId = inputPort.connect(this);
-}
-
-OutputPort.prototype.registerConnection = function(connectionId, inputPort) {
-  console.log("Register connection " + connectionId);
-	this.outputDestinations[connectionId] = inputPort;
-}
-
-OutputPort.prototype.unregisterConnection = function(connectionId) {
-	delete this.outputDestinations[connectionId];
-}
-
-OutputPort.prototype.disconnect = function(connectionId) {
-	var destination = this.outputDestinations[connectionId]
-	if (destination == undefined) return;
-	destination.disconnect(connectionId);
-}
-
-/********************** INPUT PORT ****************************/
-function InputPort(callback, aggregation) {
-	this.callback = callback;
-	this.inputs = {};
-	this.inputSources = {};
-	this.lastValue = 0;
-	this.aggregation = aggregation;
-}
-
-InputPort.prototype.nextConnectionId = 0;
-
-InputPort.prototype.connect = function(outputPort) {
-	connectionId = InputPort.prototype.nextConnectionId;
-	InputPort.prototype.nextConnectionId += 1;
-	var subscriber =  this.newValue.bind(this, connectionId);
-	this.inputs[connectionId] = 0;
-	this.inputSources[connectionId] = [outputPort, subscriber];
-	outputPort.on("value", subscriber);
-	return connectionId;
-}
-
-InputPort.prototype.disconnect = function(connectionId) {
-	var source = this.inputSources[connectionId][0];
-	var subscriber = this.inputSources[connectionId][1];
-	source.removeListener("value", subscriber)
-	source.unregisterConnection(connectionId);
-	delete this.inputs[connectionId];
-	delete this.inputSources[connectionId];
-}
-
-InputPort.prototype.newValue = function(connectionId, newValue) {
-  //console.log("Inputport value " + connectionId + ": " + newValue)
-	if (this.aggregation == "latest"){
-		resultValue = newValue;
-  } else if (this.aggregation == "all") {
-    this.callback(resultValue);
-    return;
-	} else {
-		resultValue = this.inputs[connectionId] = newValue;
-		for (id in this.inputs) { 
-			if (this.inputs[id] > resultValue) resultValue = this.inputs[id];
-		}
-	}
-	if (resultValue != this.lastValue) {
-		this.lastValue = resultValue;
-		this.callback(resultValue);
-	}
-}
+require('lib/input_port.js');
+require('lib/output_port.js');
 
 /********************** DEVICE ****************************/
 
