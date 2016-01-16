@@ -19,6 +19,18 @@ This work is licensed under the [MIT license](https://tldrlegal.com/license/mit-
 ## FTDI
 I had a little trouble getting the ftdi library to work with the latest nodejs (0.12). It wouldn't install by default, but i found a git branch that works, forked it and added some functionality. It should install automatically.
 
+
+## API
+The api is used to manipulate the network that is being run by showmaster. This network consists of virtual devices. Each device has input ports and output ports. An output port can be connected up to an input port.
+
+POST /devices {type:looper}
+GET /devices/1 {id:1, type:looper, attributes: {numOutputs: 1}}
+DELETE /devices/1
+
+POST /connections {input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
+GET /connections/3
+DELETE /connections/3
+
 ## Installation
 Assuming you have nodejs installed on osx or linux:
 
