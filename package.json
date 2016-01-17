@@ -17,6 +17,7 @@
   "dependencies": {
     "express": "^4.13.3",
     "ftdi": "https://github.com/richmans/node-ftdi.git#nan",
+    "midi": "^0.9.4",
     "socket.io": "^1.3.7"
   },
   "repository": {
