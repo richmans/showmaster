@@ -8,7 +8,7 @@ The goal is to have a service that runs on a computer with a DMX connector, that
 ## Predefined devices
 Showmaster provides a number of predefined devices. 
 
-* The *DMX Device* has 512 input ports, and writes the values of these ports to a serial connection. The inputs are expected to be floats between 0 and 1, and are multiplied by 255. This has been tested with the [Open DMX USB from Enttec](https://www.enttec.com/?main_menu=Products&pn=70303). It should be adaptable to other products.
+* The *DMX Output Device* has 512 input ports, and writes the values of these ports to a serial connection. The inputs are expected to be floats between 0 and 1, and are multiplied by 255. This has been tested with the [Open DMX USB from Enttec](https://www.enttec.com/?main_menu=Products&pn=70303). It should be adaptable to other products.
 * The *Sockio Device* has a variable number of input and output ports and provides a socketio service on which clients can create and destroy ports, and connect them to other ports in the network.
 * The *Mixer Device* has 'input' and 'intensity' - inputs. These inputs are multiplied and sent to the 'output'-output. This allows you to have a global 'intensity' value and apply it to all channels.
 
@@ -17,22 +17,22 @@ Showmaster provides a number of predefined devices.
 This work is licensed under the [MIT license](https://tldrlegal.com/license/mit-license)
 
 ## FTDI
-I had a little trouble getting the ftdi library to work with the latest nodejs (0.12). It wouldn't install by default, but i found a git branch that works, forked it and added some functionality. It should install automatically.
+I had a little trouble getting the ftdi library to work with my current nodejs (0.12). It wouldn't install by default, but i found a git branch that works, forked it and added some functionality. It should install automatically.
 
 
 ## API
-The api is used to manipulate the network that is being run by showmaster. This network consists of virtual devices. Each device has input ports and output ports. An output port can be connected up to an input port.
+The api is used to manipulate the network that is being run by showmaster. This network consists of virtual devices. Each device has input ports and output ports. An output port can be connected up to an input port by creating a connection.
 
-POST /devices {type:looper}
-GET /devices/1 {id:1, type:looper, attributes: {numOutputs: 1}}
-DELETE /devices/1
-
-POST /connections {input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
-GET /connections/3
-DELETE /connections/3
+    POST /devices {type:LooperDevice}
+    GET /devices/1 => {id:1, type:LooperDevice, attributes: {numOutputs: 1}}
+    DELETE /devices/1
+    
+    POST /connections {input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
+    GET /connections/3 => {id:3, input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
+    DELETE /connections/3
 
 ## Installation
-Assuming you have nodejs installed on osx or linux:
+Assuming you have nodejs 0.12 installed on osx or linux:
 
     git clone https://github.com/richmans/showmaster.git
     cd showmaster
