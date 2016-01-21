@@ -15,6 +15,7 @@
   "author": "Richard Bronkhorst",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.14.2",
     "express": "^4.13.3",
     "ftdi": "https://github.com/richmans/node-ftdi.git#nan",
     "midi": "^0.9.4",
