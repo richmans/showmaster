@@ -21,15 +21,15 @@ I had a little trouble getting the ftdi library to work with my current nodejs (
 
 
 ## API
-The api is used to manipulate the network that is being run by showmaster. This network consists of virtual devices. Each device has input ports and output ports. An output port can be connected up to an input port by creating a connection.
+The api is used to manipulate the network that is being run by showmaster. This network consists of virtual devices. Each device has input ports and output ports. An output port can be connected up to an input port by creating a connection. So there are two types of resources: Devices and Connections. Each resource can be GETted, POSTed or DELETEd with the expected result.
 
-    POST /devices {type:LooperDevice}
-    GET /devices/1 => {id:1, type:LooperDevice, attributes: {numOutputs: 1}}
-    DELETE /devices/1
+    GET /api/devices/1 => {id:1, type:LooperDevice, attributes: {numOutputs: 5}}
+    POST /api/devices {type:LooperDevice}
+    DELETE /api/devices/1
     
-    POST /connections {input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
-    GET /connections/3 => {id:3, input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
-    DELETE /connections/3
+    GET /api/connections/3 => {id:3, input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
+    POST /api/connections {input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
+    DELETE /api/connections/3
 
 ## Installation
 Assuming you have nodejs 0.12 installed on osx or linux:
