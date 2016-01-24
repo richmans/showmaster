@@ -24,12 +24,23 @@ I had a little trouble getting the ftdi library to work with my current nodejs (
 The api is used to manipulate the network that is being run by showmaster. This network consists of virtual devices. Each device has input ports and output ports. An output port can be connected up to an input port by creating a connection. So there are two types of resources: Devices and Connections. Each resource can be GETted, POSTed or DELETEd with the expected result.
 
     GET /api/devices/1 => {id:1, type:LooperDevice, attributes: {numOutputs: 5}}
+    GET /api/devices/ => ALL devices
     POST /api/devices {type:LooperDevice}
     DELETE /api/devices/1
     
     GET /api/connections/3 => {id:3, input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
+    GET /api/connections/ => ALL connections
     POST /api/connections {input: {device:3, port:"signal"}, output: {device: 4, port:"4"}}
     DELETE /api/connections/3
+
+
+In addition, there is the sockio api, which communicates with the sockio device. If you have a sockio device in your network, opening sockio will establish a connection to that device. You will then receive updates for both input and output ports of the device, so you can update your GUI in realtime. You can also emit updates back for outputports.
+
+Messages in the sockio have either 'input' or 'output' as the event name, and the data is a hash containing 'port' and 'value'
+
+    { port: 'output1', value: 0.7457431142388481 }
+    
+Look in www/js/main.js for examples on how to use this.
 
 ## Installation
 Assuming you have nodejs 0.12 installed on osx or linux:
