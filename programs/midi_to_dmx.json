@@ -16,7 +16,8 @@
         "2": {
             "id": 2,
             "attributes": {
-              "debug": true
+              "debug": true,
+              "port": 1
             },
             "type": "MidiInputDevice"
         },
