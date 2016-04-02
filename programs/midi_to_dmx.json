@@ -107,6 +107,6 @@
             "outputPortName": "output",
             "inputDeviceId": 1,
             "inputPortName": "4"
-        },
+        }
     }
 }
