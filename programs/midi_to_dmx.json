@@ -85,28 +85,28 @@
             "outputDeviceId": 3,
             "outputPortName": "output",
             "inputDeviceId": 1,
-            "inputPortName": "1"
+            "inputPortName": "0"
         },
         "5": {
             "id": 5,
             "outputDeviceId": 4,
             "outputPortName": "output",
             "inputDeviceId": 1,
-            "inputPortName": "2"
+            "inputPortName": "1"
         },
         "6": {
             "id": 6,
             "outputDeviceId": 5,
             "outputPortName": "output",
             "inputDeviceId": 1,
-            "inputPortName": "3"
+            "inputPortName": "2"
         },
         "7": {
             "id": 7,
             "outputDeviceId": 6,
             "outputPortName": "output",
             "inputDeviceId": 1,
-            "inputPortName": "4"
+            "inputPortName": "3"
         }
     }
 }
