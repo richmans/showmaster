@@ -1,0 +1,69 @@
+{
+    "devices": {
+        "0": {
+            "id": 0,
+            "attributes": {
+              "inputs": ["input1"],
+              "outputs": ["output1", "output2"]
+            },
+            "type": "SockioDevice"
+        },
+        "1": {
+            "id": 1,
+            "attributes": {},
+            "type": "DmxOutputDevice"
+        },
+        "2": {
+            "id": 2,
+            "attributes": {
+              "debug": true
+            },
+            "type": "MidiInputDevice"
+        },
+        "3": {
+            "id": 3,
+            "attributes": {
+              "intensity": 1
+            },
+            "type": "Dimmer"
+        },
+        "4": {
+            "id": 4,
+            "attributes": {
+              "intensity": 1
+            },
+            "type": "Dimmer"
+        }
+     
+    },
+    "connections": {
+        "0": {
+            "id": 0,
+            "outputDeviceId": 2,
+            "outputPortName": "107",
+            "inputDeviceId": 3,
+            "inputPortName": "input"
+        },
+        "1": {
+            "id": 1,
+            "outputDeviceId": 2,
+            "outputPortName": "108",
+            "inputDeviceId": 4,
+            "inputPortName": "input"
+        },
+        "2": {
+            "id": 2,
+            "outputDeviceId": 3,
+            "outputPortName": "output",
+            "inputDeviceId": 1,
+            "inputPortName": "1"
+        },
+        "3": {
+            "id": 2,
+            "outputDeviceId": 4,
+            "outputPortName": "output",
+            "inputDeviceId": 1,
+            "inputPortName": "2"
+        }
+    }
+}
