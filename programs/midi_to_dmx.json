@@ -20,93 +20,331 @@
               "port": 1
             },
             "type": "MidiInputDevice"
-        },
-        "3": {
-            "id": 3,
-            "attributes": {
-              "intensity": 1
-            },
-            "type": "Dimmer"
-        },
-        "4": {
-            "id": 4,
-            "attributes": {
-              "intensity": 1
-            },
-            "type": "Dimmer"
-        },
-        "5": {
-            "id": 5,
-            "attributes": {
-              "intensity": 1
-            },
-            "type": "Dimmer"
-        },
-        "6": {
-            "id": 6,
-            "attributes": {
-              "intensity": 1
-            },
-            "type": "Dimmer"
         }
-     
     },
     "connections": {
-        "0": {
-            "id": 0,
-            "outputDeviceId": 2,
-            "outputPortName": "105",
-            "inputDeviceId": 3,
-            "inputPortName": "input"
-        },
-        "1": {
-            "id": 1,
-            "outputDeviceId": 2,
-            "outputPortName": "106",
-            "inputDeviceId": 4,
-            "inputPortName": "input"
-        },
-        "2": {
-            "id": 2,
-            "outputDeviceId": 2,
-            "outputPortName": "107",
-            "inputDeviceId": 5,
-            "inputPortName": "input"
-        },
-        "3": {
-            "id": 3,
-            "outputDeviceId": 2,
-            "outputPortName": "108",
-            "inputDeviceId": 6,
-            "inputPortName": "input"
-        },
-        "4": {
-            "id": 4,
-            "outputDeviceId": 3,
-            "outputPortName": "output",
-            "inputDeviceId": 1,
-            "inputPortName": "0"
-        },
-        "5": {
-            "id": 5,
-            "outputDeviceId": 4,
-            "outputPortName": "output",
-            "inputDeviceId": 1,
-            "inputPortName": "1"
-        },
-        "6": {
-            "id": 6,
-            "outputDeviceId": 5,
-            "outputPortName": "output",
-            "inputDeviceId": 1,
-            "inputPortName": "2"
-        },
-        "7": {
-            "id": 7,
-            "outputDeviceId": 6,
-            "outputPortName": "output",
-            "inputDeviceId": 1,
-            "inputPortName": "3"
-        }
+      "0": {
+        "id": 0,
+        "outputDeviceId": 2,
+        "outputPortName": "0",
+        "inputDeviceId": 1,
+        "inputPortName": "0"
+      },
+      "1": {
+        "id": 1,
+        "outputDeviceId": 2,
+        "outputPortName": "1",
+        "inputDeviceId": 1,
+        "inputPortName": "1"
+      },
+      "2": {
+        "id": 2,
+        "outputDeviceId": 2,
+        "outputPortName": "2",
+        "inputDeviceId": 1,
+        "inputPortName": "2"
+      },
+      "3": {
+        "id": 3,
+        "outputDeviceId": 2,
+        "outputPortName": "3",
+        "inputDeviceId": 1,
+        "inputPortName": "3"
+      },
+      "4": {
+        "id": 4,
+        "outputDeviceId": 2,
+        "outputPortName": "4",
+        "inputDeviceId": 1,
+        "inputPortName": "4"
+      },
+      "5": {
+        "id": 5,
+        "outputDeviceId": 2,
+        "outputPortName": "5",
+        "inputDeviceId": 1,
+        "inputPortName": "5"
+      },
+      "6": {
+        "id": 6,
+        "outputDeviceId": 2,
+        "outputPortName": "6",
+        "inputDeviceId": 1,
+        "inputPortName": "6"
+      },
+      "7": {
+        "id": 7,
+        "outputDeviceId": 2,
+        "outputPortName": "7",
+        "inputDeviceId": 1,
+        "inputPortName": "7"
+      },
+      "8": {
+        "id": 8,
+        "outputDeviceId": 2,
+        "outputPortName": "8",
+        "inputDeviceId": 1,
+        "inputPortName": "8"
+      },
+      "9": {
+        "id": 9,
+        "outputDeviceId": 2,
+        "outputPortName": "9",
+        "inputDeviceId": 1,
+        "inputPortName": "9"
+      },
+      "10": {
+        "id": 10,
+        "outputDeviceId": 2,
+        "outputPortName": "10",
+        "inputDeviceId": 1,
+        "inputPortName": "10"
+      },
+      "11": {
+        "id": 11,
+        "outputDeviceId": 2,
+        "outputPortName": "11",
+        "inputDeviceId": 1,
+        "inputPortName": "11"
+      },
+      "12": {
+        "id": 12,
+        "outputDeviceId": 2,
+        "outputPortName": "12",
+        "inputDeviceId": 1,
+        "inputPortName": "12"
+      },
+      "13": {
+        "id": 13,
+        "outputDeviceId": 2,
+        "outputPortName": "13",
+        "inputDeviceId": 1,
+        "inputPortName": "13"
+      },
+      "14": {
+        "id": 14,
+        "outputDeviceId": 2,
+        "outputPortName": "14",
+        "inputDeviceId": 1,
+        "inputPortName": "14"
+      },
+      "15": {
+        "id": 15,
+        "outputDeviceId": 2,
+        "outputPortName": "15",
+        "inputDeviceId": 1,
+        "inputPortName": "15"
+      },
+      "16": {
+        "id": 16,
+        "outputDeviceId": 2,
+        "outputPortName": "16",
+        "inputDeviceId": 1,
+        "inputPortName": "16"
+      },
+      "17": {
+        "id": 17,
+        "outputDeviceId": 2,
+        "outputPortName": "17",
+        "inputDeviceId": 1,
+        "inputPortName": "17"
+      },
+      "18": {
+        "id": 18,
+        "outputDeviceId": 2,
+        "outputPortName": "18",
+        "inputDeviceId": 1,
+        "inputPortName": "18"
+      },
+      "19": {
+        "id": 19,
+        "outputDeviceId": 2,
+        "outputPortName": "19",
+        "inputDeviceId": 1,
+        "inputPortName": "19"
+      },
+      "20": {
+        "id": 20,
+        "outputDeviceId": 2,
+        "outputPortName": "20",
+        "inputDeviceId": 1,
+        "inputPortName": "20"
+      },
+      "21": {
+        "id": 21,
+        "outputDeviceId": 2,
+        "outputPortName": "21",
+        "inputDeviceId": 1,
+        "inputPortName": "21"
+      },
+      "22": {
+        "id": 22,
+        "outputDeviceId": 2,
+        "outputPortName": "22",
+        "inputDeviceId": 1,
+        "inputPortName": "22"
+      },
+      "23": {
+        "id": 23,
+        "outputDeviceId": 2,
+        "outputPortName": "23",
+        "inputDeviceId": 1,
+        "inputPortName": "23"
+      },
+      "24": {
+        "id": 24,
+        "outputDeviceId": 2,
+        "outputPortName": "24",
+        "inputDeviceId": 1,
+        "inputPortName": "24"
+      },
+      "25": {
+        "id": 25,
+        "outputDeviceId": 2,
+        "outputPortName": "25",
+        "inputDeviceId": 1,
+        "inputPortName": "25"
+      },
+      "26": {
+        "id": 26,
+        "outputDeviceId": 2,
+        "outputPortName": "26",
+        "inputDeviceId": 1,
+        "inputPortName": "26"
+      },
+      "27": {
+        "id": 27,
+        "outputDeviceId": 2,
+        "outputPortName": "27",
+        "inputDeviceId": 1,
+        "inputPortName": "27"
+      },
+      "28": {
+        "id": 28,
+        "outputDeviceId": 2,
+        "outputPortName": "28",
+        "inputDeviceId": 1,
+        "inputPortName": "28"
+      },
+      "29": {
+        "id": 29,
+        "outputDeviceId": 2,
+        "outputPortName": "29",
+        "inputDeviceId": 1,
+        "inputPortName": "29"
+      },
+      "30": {
+        "id": 30,
+        "outputDeviceId": 2,
+        "outputPortName": "30",
+        "inputDeviceId": 1,
+        "inputPortName": "30"
+      },
+      "31": {
+        "id": 31,
+        "outputDeviceId": 2,
+        "outputPortName": "31",
+        "inputDeviceId": 1,
+        "inputPortName": "31"
+      },
+      "32": {
+        "id": 32,
+        "outputDeviceId": 2,
+        "outputPortName": "32",
+        "inputDeviceId": 1,
+        "inputPortName": "32"
+      },
+      "33": {
+        "id": 33,
+        "outputDeviceId": 2,
+        "outputPortName": "33",
+        "inputDeviceId": 1,
+        "inputPortName": "33"
+      },
+      "34": {
+        "id": 34,
+        "outputDeviceId": 2,
+        "outputPortName": "34",
+        "inputDeviceId": 1,
+        "inputPortName": "34"
+      },
+      "35": {
+        "id": 35,
+        "outputDeviceId": 2,
+        "outputPortName": "35",
+        "inputDeviceId": 1,
+        "inputPortName": "35"
+      },
+      "36": {
+        "id": 36,
+        "outputDeviceId": 2,
+        "outputPortName": "36",
+        "inputDeviceId": 1,
+        "inputPortName": "36"
+      },
+      "37": {
+        "id": 37,
+        "outputDeviceId": 2,
+        "outputPortName": "37",
+        "inputDeviceId": 1,
+        "inputPortName": "37"
+      },
+      "38": {
+        "id": 38,
+        "outputDeviceId": 2,
+        "outputPortName": "38",
+        "inputDeviceId": 1,
+        "inputPortName": "38"
+      },
+      "39": {
+        "id": 39,
+        "outputDeviceId": 2,
+        "outputPortName": "39",
+        "inputDeviceId": 1,
+        "inputPortName": "39"
+      },
+      "40": {
+        "id": 40,
+        "outputDeviceId": 2,
+        "outputPortName": "40",
+        "inputDeviceId": 1,
+        "inputPortName": "40"
+      },
+      "41": {
+        "id": 41,
+        "outputDeviceId": 2,
+        "outputPortName": "41",
+        "inputDeviceId": 1,
+        "inputPortName": "41"
+      },
+      "42": {
+        "id": 42,
+        "outputDeviceId": 2,
+        "outputPortName": "42",
+        "inputDeviceId": 1,
+        "inputPortName": "42"
+      },
+      "43": {
+        "id": 43,
+        "outputDeviceId": 2,
+        "outputPortName": "43",
+        "inputDeviceId": 1,
+        "inputPortName": "43"
+      },
+      "44": {
+        "id": 44,
+        "outputDeviceId": 2,
+        "outputPortName": "44",
+        "inputDeviceId": 1,
+        "inputPortName": "44"
+      },
+      "45": {
+        "id": 45,
+        "outputDeviceId": 2,
+        "outputPortName": "45",
+        "inputDeviceId": 1,
+        "inputPortName": "45"
+      }
     }
+
 }
