@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Showoff control panel</title>
+<!--    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/showoff.css" rel="stylesheet">
+    -->
+  </head>
+  <body>
+    
+    <div class='navbar navbar-default'>
+      <div class="container-fluid">
+        <div class="navbar-header">
+           <a class="navbar-brand" href="#">ShowMaster</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 ">
+          <div class="list-group program-scenes">
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            <a href="#" class="list-group-item active">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">List group item heading</h4>
+              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+            </a>
+            
+          </div>
+          <div class='quick-scenes'>
+            <h4>Quick scenes</h4>
+            <span class="label label-danger">Kerst</span>
+            <span class="label label-danger">Rood</span>
+            <span class="label label-success">Groen</span>
+            <span class="label label-info">Blauw</span>
+            <span class="label label-danger">LED Rood</span>
+            <span class="label label-success">LED Groen</span>
+            <span class="label label-info">LED Blauw</span>
+            <span class="label label-info">Wit voor</span>
+            <span class="label label-primary">Disco</span>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          
+          <h1>Next scene 
+          <button id="button-go" type="button" class="btn btn-success" aria-label="Left Align">
+            <span aria-hidden="true">GO &gt;&gt; </span>
+          </button>
+          </h1>
+          <div class="panel panel-primary">
+            <div class="panel-heading">Kerst</div>
+            <div class="panel-body">
+              Kerstverlichting op 40%
+            </div>
+          </div>
+          
+          <div class="panel panel-danger">
+            <div class="panel-heading">Rood</div>
+            <div class="panel-body">
+              Rode lampen op 75%
+            </div>
+          </div>
+          
+          <div class="panel panel-info">
+            <div class="panel-heading">LED Blauw</div>
+            <div class="panel-body">
+              LED lampen blauw
+            </div>
+          </div>
+          
+        </div>
+      
+      <div class="col-md-4">
+        <h1>Current scene </h1>
+        <div class="panel panel-danger">
+          <div class="panel-heading">Kerst <span class='close'>X</span></div>
+          <div class="panel-body">
+            Kerstverlichting op 40%
+          </div>
+        </div>
+        
+        <div class="panel panel-danger">
+          <div class="panel-heading">Rood <span class='close'>X</span></div>
+          <div class="panel-body">
+            Rode lampen op 100%
+          </div>
+        </div>
+        
+        <div class="panel panel-success">
+          <div class="panel-heading">LED Groen <span class='close'>X</span></div>
+          <div class="panel-body">
+            LED lampen Groen
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class="col-md-2">
+        <div class='beat'>
+          <button id="button-beat" type="button" class="btn btn-primary" aria-label="Left Align">
+            <span class="" aria-hidden="true">120 BPM</span>
+          </button>
+        </div>
+        <p>Panic modes:</p>
+        <div class="btn-group" role="group" aria-label="...">
+          <button type="button" class="btn btn-danger">Failsafe</button>
+          <button type="button" class="btn btn-info">Black</button>
+        </div>
+      </div>
+      <div id='root'>aasdfasdfsdfd</div>
+      
+    </div>
+    
+    
+<!--    
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="dist/app.js"></script>
+    -->
+  </body>
+</html>

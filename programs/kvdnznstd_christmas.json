@@ -1,0 +1,127 @@
+{
+	"format": "lightshow",
+	"dmx": {
+		"address": "localhost:9090"
+	},
+	"channels": {
+		"groen_la": 23,
+		"rood_la": 22,
+		"blauw_la": 21,
+		"blauw_ra": 24,
+		"rood_ra": 25,
+		"groen_ra": 26,
+		"band1": 31,
+		"band2": 32,
+		"spot_l": 34,
+		"spot_r": 35,
+		"zaal": 54,
+		"kerstboom": 90,
+		"kerst_podium_l": 91,
+		"kerst_podium_r": 92,
+		"kerst_dak_1": 93,
+		"kerst_dak_2": 94,
+		"kerst_dak_3": 95,
+		"kerst_dak_4": 96,
+		"led_podium_lr": 100,
+		"led_podium_lg": 101,
+		"led_podium_lb": 102,
+		"led_podium_rr": 108,
+		"led_podium_rg": 109,
+		"led_podium_rb": 110
+	},
+	"groups": {
+		"kerst": [
+			"kerstboom",
+			"kerst_podium_l",
+			"kerst_dak_1",
+			"kerst_dak_2",
+			"kerst_dak_3",
+			"kerst_dak_4"
+		],
+		"rood": [
+			"rood_la",
+			"rood_ra"
+		],
+		"groen": [
+			"groen_la",
+			"groen_ra"
+		],
+		"blauw": [
+			"blauw_la",
+			"blauw_ra"
+		],
+		"wit": [
+			"band1",
+			"band2"
+		],
+		"led_rood": [
+			"led_podium_lr",
+			"led_podium_rr"
+		],
+		"led_groen": [
+			"led_podium_lg",
+			"led_podium_rg"
+		],
+		"led_blauw": [
+			"led_podium_lb",
+			"led_podium_rb"
+		]
+
+	},
+	"programs": {
+		"disco": {
+			"type": "loop",
+			"fade": 0,
+			"steps": [
+				"rood",
+				"groen",
+				"blauw"
+			]
+		},
+
+		"rustig": {
+			"type": "loop",
+			"fade": 500,
+			"steps": [
+				"rood",
+				"groen",
+				"blauw"
+			]
+		},
+
+		"muz_intens": {
+			"disco": 255,
+			"wit": 100
+		},
+
+		"muz_rustig": {
+			"rustig": 150,
+			"wit": 50
+		}
+	},
+	"schedule": [{
+			"name": "inloop",
+			"programs": {
+				"rood": 100,
+				"wit": 25,
+				"zaal": 100,
+				"led_blauw": 255
+			}
+		}, {
+			"name": "opening",
+			"desc": "tijdens filmpje. Einde: en toen kwam Jozef binnen",
+			"programs": {
+				"led_rood": 25
+			}
+		}, {
+			"name": "opkomst jozef",
+			"desc": "speech jozef, Einde: toen kreeg ik een droom",
+			"programs": {
+				"led_blauw": 25,
+				"spot_l": 255,
+				"kerst": 255
+			}
+		}
+
+	]
+}

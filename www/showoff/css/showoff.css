@@ -1,0 +1,42 @@
+div.container {
+  width:100%;
+}
+div.schedule-scenes {
+  overflow-y:scroll;
+  height:550px;
+}
+
+div.schedule-scenes a.list-group-item {
+  height:100px;
+  border-top: 1px solid #687583;
+}
+
+div.schedule-scenes a.list-group-item:first-letter {
+    text-transform:capitalize;
+}
+
+button#button-beat {
+  padding:50px;
+}
+
+button#button-go {
+  float:right;
+}
+
+div.beat {
+  margin-bottom:60px;
+}
+div.quick-programs span.label {
+  margin-right:5px;
+  padding:5px;
+  line-height:28pt;
+  font-size:12pt;
+  cursor:pointer;
+}
+
+div.loading {
+  font-size:20pt;
+  width:100%;
+  text-align:center;
+  margin-top: 60px;
+}
