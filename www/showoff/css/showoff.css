@@ -29,9 +29,10 @@ div.beat {
 div.quick-programs span.label {
   margin-right:5px;
   padding:5px;
-  line-height:28pt;
   font-size:12pt;
   cursor:pointer;
+  display:inline-block;
+  margin-bottom:10px;
 }
 
 div.loading {
