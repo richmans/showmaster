@@ -101,6 +101,7 @@
 	},
 	"schedule": [{
 			"name": "inloop",
+      "desc": "Instarten wanneer marijn queue geeft.",
 			"programs": {
 				"rood": 100,
 				"wit": 25,
@@ -118,6 +119,38 @@
 			"desc": "speech jozef, Einde: toen kreeg ik een droom",
 			"programs": {
 				"led_blauw": 25,
+				"spot_l": 255,
+				"kerst": 255
+        }
+      }, {
+			"name": "Dialoog 1",
+			"desc": "Dialoog met maria. Einde wanneer muziek inzet.",
+			"programs": {
+				"led_blauw": 25,
+				"spot_l": 255,
+				"kerst": 255
+			}
+		},  {
+			"name": "Solo Maria",
+			"desc": "Dialoog met maria. Einde wanneer muziek inzet.",
+			"programs": {
+				"muz_rustig": 100,
+				"spot_l": 255,
+				"kerst": 255
+			}
+		}, {
+			"name": "Dialoog 2",
+			"desc": "Dialoog met herders. Einde als maria van het podium af gaat..",
+			"programs": {
+				"led_blauw": 25,
+				"spot_l": 255,
+				"kerst": 255
+			}
+		},  {
+			"name": "ZINGEN In het stro",
+			"desc": "Opwekking 534, lengte 3:21, einde mensenlot",
+			"programs": {
+				"muz_rustig": 100,
 				"spot_l": 255,
 				"kerst": 255
 			}
