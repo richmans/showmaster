@@ -46,7 +46,7 @@ class ShowView extends Component {
   }
   
   handleNextScene() {
-    if (this.state.active_scene >= this.props.schedule.schedule.length - 1) { 
+    if (this.state.active_scene >= this.props.schedule.schedule.length) { 
       console.log("End of schedule")
       return ;
     }
