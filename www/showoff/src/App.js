@@ -1,4 +1,10 @@
 import React, { Component } from 'react';
+import $ from '../js/jquery.min.js';
+import slider from '../js/slider.jquery.js';
+
+//dirty hack around namespacing problem
+slider($);
+
 class App extends Component {
   render() {
     return (
@@ -10,7 +16,7 @@ class App extends Component {
   }
 }
 
-
+// Header on top
 class Navbar extends Component {
   render() {
     return (
@@ -18,7 +24,6 @@ class Navbar extends Component {
         <div className="container-fluid">
           <div className="navbar-header">
              <a className="navbar-brand" href="#">ShowMaster {this.props.schedule.format}</a>
-             
           </div>
         </div>
       </div>
@@ -26,24 +31,39 @@ class Navbar extends Component {
   }
 }
 
+// Main view
 class ShowView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      active_scene: 0
+      active_scene: 0,
+      next_programs: this.props.schedule.schedule[0].programs,
+      current_programs: []
     };
   
     this.handleSceneChange = this.handleSceneChange.bind(this);
+    this.handleNextScene= this.handleNextScene.bind(this)
   }
   
-  handleSceneChange(active_scene, other, things, and, such) {
-    console.log( active_scene)
-    console.log( other)
-    console.log( things)
-    console.log( and)
-    console.log( such)
+  handleNextScene() {
+    if (this.state.active_scene >= this.props.schedule.schedule.length - 1) { 
+      console.log("End of schedule")
+      return ;
+    }
     this.setState({
-      active_scene: active_scene
+      current_programs: this.state.next_programs
+    })
+    this.handleSceneChange(this.state.active_scene + 1)
+    
+  }
+  
+  handleSceneChange(active_scene) {
+    active_scene = parseInt(active_scene);
+    
+    var programs = this.props.schedule.schedule[active_scene].programs
+    this.setState({
+      active_scene: active_scene,
+      next_programs: programs
     });
   }
   
@@ -57,6 +77,7 @@ class ShowView extends Component {
               active={this.state.active_scene} 
               scenes={this.props.schedule.schedule}
               onSceneChange={this.handleSceneChange}
+              
             />
           </div>
          <QuickProgramPicker 
@@ -65,10 +86,14 @@ class ShowView extends Component {
             />
         </div>
         <div className="col-md-3">
-          <SceneView scene_lookup="next"/>
+          <SceneView 
+            programs={this.state.next_programs} 
+            scene_lookup="next"
+            onNextScene={this.handleNextScene}/>
         </div>
         <div className="col-md-4">
-          <SceneView/>
+          <SceneView
+            programs={this.state.current_programs}/>
         </div>
         <div className="col-md-2">
           <GlobalControls/>
@@ -79,9 +104,9 @@ class ShowView extends Component {
   }
 }
 
+// List entry for ProgramView
 class ProgramSceneView extends Component {
   onSceneChange() {
-    console.log(this.props.sceneKey)
     this.props.onSceneChange(this.props.sceneKey);
   }
   
@@ -95,12 +120,13 @@ class ProgramSceneView extends Component {
     )
   }
 }
+
+// Shows a  list of all scenes
 class ProgramView extends Component {
   render() {
     var scenes = []
     
     for(var key in this.props.scenes) {
-      console.log(key)
       var scene = this.props.scenes[key];
       var active = (this.props.active == key)? "active": "";
       scenes.push(
@@ -109,6 +135,7 @@ class ProgramView extends Component {
            name={scene.name} 
            desc={scene.desc}
            sceneKey={key}
+           key={key}
            onSceneChange={this.props.onSceneChange}
           />
       )
@@ -121,7 +148,7 @@ class ProgramView extends Component {
   }
 }
 
-
+// Entry for QuickProgramPicker
 class QuickProgram extends Component {
   render() {
     return (
@@ -129,14 +156,17 @@ class QuickProgram extends Component {
     );
   }
 }
+
+//Shows all groups and programs, allows user to quickly add them to either
+// next scene or current scene
 class QuickProgramPicker extends Component {
   render() {
     var programs = []
     for (var program_name in this.props.programs){
-      programs.push(<QuickProgram name={program_name} color='danger'/>)
+      programs.push(<QuickProgram key={program_name} name={program_name} color='danger'/>)
     };
     for (var program_name in this.props.groups){
-      programs.push(<QuickProgram name={program_name} color='success'/>)
+      programs.push(<QuickProgram key={program_name} name={program_name} color='success'/>)
     };
     
     return (
@@ -148,28 +178,67 @@ class QuickProgramPicker extends Component {
   }
 }
 
-
+class SceneViewItem extends Component {
+  render() {
+    return ( <div className="panel panel-primary">
+        <div className="panel-heading">{this.props.name}</div>
+        <div className="panel-body">
+          <IntensitySlider value={this.props.intensity}/>
+        </div>
+      </div>
+    )
+  }
+}
+// Shows a list of programs in a scene
 class SceneView extends Component {
   render() {
     var header;
+    var programs=[]
     if (this.props.scene_lookup === "next") {
       header =  (
-        <h1>Next scene <GoButton/></h1>
+        <h1>Next scene <GoButton onNextScene={this.props.onNextScene}/></h1>
       );
     }else {
       header = (
         <h1>Current Scene</h1>
       );
     }
-  
+    for (var key in this.props.programs) {
+      var intensity = this.props.programs[key]
+      programs.push(
+        <SceneViewItem name={key} key={key} intensity={intensity}/>
+      )
+    }
     return (
       <div>
         {header}
+        {programs}
       </div>
     );
   }
 }
 
+class IntensitySlider extends Component {
+  componentDidMount() {
+    this.slider = $(this.refs.intensitySlider).freshslider({
+       step: 1,
+       max: 255,
+       value: this.props.value
+    });
+  }
+  
+  componentDidUpdate(prevProps, prevState) {
+    this.slider.setValue(this.props.value);
+  }
+  
+  render() {
+    return (
+      <div ref='intensitySlider' data-value={this.props.value} style={{width: 200}}></div>
+    );
+  }
+}
+
+// Shows Beat button, Panic buttons
 class GlobalControls extends Component {
   render() {
     return (
@@ -183,7 +252,7 @@ class GoButton extends Component {
   render() {
     return (
       <span>
-          <button id="button-go" type="button" className="btn btn-success" aria-label="Left Align">
+          <button onClick={this.props.onNextScene} id="button-go" type="button" className="btn btn-success" aria-label="Left Align">
             <span aria-hidden="true">GO &gt;&gt; </span>
           </button>
       </span>
