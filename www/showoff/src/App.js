@@ -37,7 +37,7 @@ class ShowView extends Component {
     super(props);
     this.state = {
       active_scene: 0,
-      next_programs: $.extend({}, this.props.schedule.schedule[0].programs),
+      next_programs: Object.assign({}, this.props.schedule.schedule[0].programs),
       current_programs: []
     };
   
@@ -63,7 +63,7 @@ class ShowView extends Component {
     var programs = this.props.schedule.schedule[active_scene].programs
     this.setState({
       active_scene: active_scene,
-      next_programs: $.extend({}, programs)// shallow clone
+      next_programs: Object.assign({}, programs)// shallow clone
     });
   }
   
