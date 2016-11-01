@@ -37,7 +37,7 @@ class ShowView extends Component {
     super(props);
     this.state = {
       active_scene: 0,
-      next_programs: this.props.schedule.schedule[0].programs,
+      next_programs: $.extend({}, this.props.schedule.schedule[0].programs),
       current_programs: []
     };
   
@@ -63,10 +63,17 @@ class ShowView extends Component {
     var programs = this.props.schedule.schedule[active_scene].programs
     this.setState({
       active_scene: active_scene,
-      next_programs: programs
+      next_programs: $.extend({}, programs)// shallow clone
     });
   }
   
+  onCurrentSceneIntensity(program, intensity) {
+    this.state.current_programs[program] = intensity
+  }
+  
+  onNextSceneIntensity(program, intensity) {
+    this.state.next_programs[program] = intensity
+  }
   render() {
     return (
     <div className="container">
@@ -89,11 +96,13 @@ class ShowView extends Component {
           <SceneView 
             programs={this.state.next_programs} 
             scene_lookup="next"
-            onNextScene={this.handleNextScene}/>
+            onNextScene={this.handleNextScene}
+            onIntensityChange={this.onNextSceneIntensity.bind(this)}/>
         </div>
         <div className="col-md-4">
           <SceneView
-            programs={this.state.current_programs}/>
+            programs={this.state.current_programs}
+            onIntensityChange={this.onCurrentSceneIntensity.bind(this)}/>
         </div>
         <div className="col-md-2">
           <GlobalControls/>
@@ -183,7 +192,7 @@ class SceneViewItem extends Component {
     return ( <div className="panel panel-primary">
         <div className="panel-heading">{this.props.name}</div>
         <div className="panel-body">
-          <IntensitySlider value={this.props.intensity}/>
+          <IntensitySlider onChange={this.props.onIntensityChange.bind(this, this.props.name)} value={this.props.intensity}/>
         </div>
       </div>
     )
@@ -206,7 +215,7 @@ class SceneView extends Component {
     for (var key in this.props.programs) {
       var intensity = this.props.programs[key]
       programs.push(
-        <SceneViewItem name={key} key={key} intensity={intensity}/>
+        <SceneViewItem onIntensityChange={this.props.onIntensityChange} name={key} key={key} intensity={intensity}/>
       )
     }
     return (
@@ -223,7 +232,8 @@ class IntensitySlider extends Component {
     this.slider = $(this.refs.intensitySlider).freshslider({
        step: 1,
        max: 255,
-       value: this.props.value
+       value: this.props.value,
+       onchange: this.props.onChange
     });
   }
   
@@ -233,7 +243,7 @@ class IntensitySlider extends Component {
   
   render() {
     return (
-      <div ref='intensitySlider' data-value={this.props.value} style={{width: 200}}></div>
+      <div ref='intensitySlider' data-value={this.props.value} style={{width: '95%'}}></div>
     );
   }
 }
