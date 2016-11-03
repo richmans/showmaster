@@ -68,11 +68,37 @@ class ShowView extends Component {
   }
   
   onCurrentSceneIntensity(program, intensity) {
-    this.state.current_programs[program] = intensity
+    var programs = this.state.current_programs
+    if (programs[program] == intensity) return;
+    programs[program] = intensity
+    this.setState({
+      current_programs: programs,
+    })
   }
   
   onNextSceneIntensity(program, intensity) {
-    this.state.next_programs[program] = intensity
+    var programs = this.state.next_programs
+    if (programs[program] == intensity) return;
+    programs[program] = intensity
+    this.setState({
+      next_programs: programs,
+    })
+  }
+  
+  onNextProgramDelete(program) {
+    var programs = this.state.next_programs
+    delete programs[program]
+    this.setState({
+      next_programs: programs,
+    })
+  }
+  
+  onCurrentProgramDelete(program) {
+    var programs = this.state.current_programs
+    delete programs[program]
+    this.setState({
+      current_programs: programs,
+    })
   }
   render() {
     return (
@@ -97,12 +123,14 @@ class ShowView extends Component {
             programs={this.state.next_programs} 
             scene_lookup="next"
             onNextScene={this.handleNextScene}
-            onIntensityChange={this.onNextSceneIntensity.bind(this)}/>
+            onIntensityChange={this.onNextSceneIntensity.bind(this)}
+            onProgramDelete={this.onNextProgramDelete.bind(this)}/>
         </div>
         <div className="col-md-4">
           <SceneView
             programs={this.state.current_programs}
-            onIntensityChange={this.onCurrentSceneIntensity.bind(this)}/>
+            onIntensityChange={this.onCurrentSceneIntensity.bind(this)}
+            onProgramDelete={this.onCurrentProgramDelete.bind(this)}/>
         </div>
         <div className="col-md-2">
           <GlobalControls/>
@@ -190,7 +218,9 @@ class QuickProgramPicker extends Component {
 class SceneViewItem extends Component {
   render() {
     return ( <div className="panel panel-primary">
-        <div className="panel-heading">{this.props.name}</div>
+        <div className="panel-heading">{this.props.name}
+          <span className='close' onClick={this.props.onProgramDelete.bind(this,this.props.name)}>X</span>
+        </div>
         <div className="panel-body">
           <IntensitySlider onChange={this.props.onIntensityChange.bind(this, this.props.name)} value={this.props.intensity}/>
         </div>
@@ -215,7 +245,11 @@ class SceneView extends Component {
     for (var key in this.props.programs) {
       var intensity = this.props.programs[key]
       programs.push(
-        <SceneViewItem onIntensityChange={this.props.onIntensityChange} name={key} key={key} intensity={intensity}/>
+        <SceneViewItem 
+          onIntensityChange={this.props.onIntensityChange} 
+          onProgramDelete={this.props.onProgramDelete}
+          name={key} key={key} 
+          intensity={intensity}/>
       )
     }
     return (
@@ -238,7 +272,9 @@ class IntensitySlider extends Component {
   }
   
   componentDidUpdate(prevProps, prevState) {
-    this.slider.setValue(this.props.value);
+    this.slider.onchange = undefined
+    this.slider.setValue(this.props.value)
+    this.slider.onchange = this.props.onChange
   }
   
   render() {
