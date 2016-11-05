@@ -100,6 +100,31 @@ class ShowView extends Component {
       current_programs: programs,
     })
   }
+  
+  onActivateNextProgram(program) {
+    var programs = this.state.next_programs
+    programs[program] = 255
+    this.setState({
+      next_programs: programs,
+    })
+  }
+
+  onActivateCurrentProgram(program) {
+    var programs = this.state.current_programs
+    programs[program] = 255
+    this.setState({
+      current_programs: programs,
+    })
+  }
+  
+  onActivateProgram(destination, program) {
+    if (destination == "next") {
+      this.onActivateNextProgram(program)
+    } else {
+      this.onActivateCurrentProgram(program)
+    }
+  }
+  
   render() {
     return (
     <div className="container">
@@ -116,6 +141,7 @@ class ShowView extends Component {
          <QuickProgramPicker 
             groups={this.props.schedule.groups} 
             programs={this.props.schedule.programs}
+            onActivateProgram={this.onActivateProgram.bind(this)}
             />
         </div>
         <div className="col-md-3">
@@ -189,7 +215,9 @@ class ProgramView extends Component {
 class QuickProgram extends Component {
   render() {
     return (
-      <span className={"label label-" + this.props.color}>{this.props.name}</span>
+      <span 
+        onClick={this.props.onActivateProgram.bind(this, this.props.name)}
+        className={"label label-" + this.props.color}>{this.props.name}</span>
     );
   }
 }
@@ -197,18 +225,46 @@ class QuickProgram extends Component {
 //Shows all groups and programs, allows user to quickly add them to either
 // next scene or current scene
 class QuickProgramPicker extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      destination: "next"
+    }
+  }
+  
+  swapDestination(newDestination) {
+    this.setState( {
+      destination: (this.state.destination == "next") ? "current" : "next"
+    })
+  }
+  
+  activateProgram(program) {
+    this.props.onActivateProgram(this.state.destination, program)
+  }
+  
   render() {
     var programs = []
     for (var program_name in this.props.programs){
-      programs.push(<QuickProgram key={program_name} name={program_name} color='danger'/>)
+      programs.push(<QuickProgram 
+        key={program_name} 
+        name={program_name} 
+        color='danger'
+        onActivateProgram={this.activateProgram.bind(this)}/>)
     };
     for (var program_name in this.props.groups){
-      programs.push(<QuickProgram key={program_name} name={program_name} color='success'/>)
+      programs.push(<QuickProgram key={program_name} name={program_name} 
+        onActivateProgram={this.activateProgram.bind(this)}
+        color='success'/>)
     };
-    
+    var destClass= (this.state.destination == "next") ? "btn-success" : "btn-danger"
+    var destText= (this.state.destination == "next") ? "Next" : "Current"
     return (
       <div className='quick-programs'>
-        <h4>Quick Programs</h4>
+        <h4>Quick Programs
+         <span className='quick-dest'>
+            <button type="button" className={"btn " + destClass} onClick={this.swapDestination.bind(this)}>{destText}</button>
+         </span>
+        </h4>
         {programs}
       </div>
     );

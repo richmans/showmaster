@@ -35,6 +35,18 @@ div.quick-programs span.label {
   margin-bottom:10px;
 }
 
+span.quick-dest {
+  float:right;
+}
+div.quick-programs h4 {
+  margin-bottom:25px;
+}
+div.quick-programs button {
+  padding:5px;
+  margin-right:5px;
+  cursor:pointer;
+}
+
 div.loading {
   font-size:20pt;
   width:100%;
