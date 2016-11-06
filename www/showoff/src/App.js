@@ -36,9 +36,9 @@ class ShowView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      active_scene: 0,
-      next_programs: Object.assign({}, this.props.schedule.schedule[0].programs),
-      current_programs: []
+      activeScene: 0,
+      nextPrograms: Object.assign({}, this.props.schedule.schedule[0].programs),
+      currentPrograms: []
     };
   
     this.handleSceneChange = this.handleSceneChange.bind(this);
@@ -46,74 +46,74 @@ class ShowView extends Component {
   }
   
   handleNextScene() {
-    if (this.state.active_scene >= this.props.schedule.schedule.length) { 
+    if (this.state.activeScene >= this.props.schedule.schedule.length) { 
       console.log("End of schedule")
       return ;
     }
     this.setState({
-      current_programs: this.state.next_programs
+      currentPrograms: this.state.nextPrograms
     })
-    this.handleSceneChange(this.state.active_scene + 1)
+    this.handleSceneChange(this.state.activeScene + 1)
     
   }
   
-  handleSceneChange(active_scene) {
-    active_scene = parseInt(active_scene);
+  handleSceneChange(activeScene) {
+    activeScene = parseInt(activeScene);
     
-    var programs = this.props.schedule.schedule[active_scene].programs
+    var programs = this.props.schedule.schedule[activeScene].programs
     this.setState({
-      active_scene: active_scene,
-      next_programs: Object.assign({}, programs)// shallow clone
+      activeScene: activeScene,
+      nextPrograms: Object.assign({}, programs)// shallow clone
     });
   }
   
   onCurrentSceneIntensity(program, intensity) {
-    var programs = this.state.current_programs
+    var programs = this.state.currentPrograms
     if (programs[program] == intensity) return;
     programs[program] = intensity
     this.setState({
-      current_programs: programs,
+      currentPrograms: programs,
     })
   }
   
   onNextSceneIntensity(program, intensity) {
-    var programs = this.state.next_programs
+    var programs = this.state.nextPrograms
     if (programs[program] == intensity) return;
     programs[program] = intensity
     this.setState({
-      next_programs: programs,
+      nextPrograms: programs,
     })
   }
   
   onNextProgramDelete(program) {
-    var programs = this.state.next_programs
+    var programs = this.state.nextPrograms
     delete programs[program]
     this.setState({
-      next_programs: programs,
+      nextPrograms: programs,
     })
   }
   
   onCurrentProgramDelete(program) {
-    var programs = this.state.current_programs
+    var programs = this.state.currentPrograms
     delete programs[program]
     this.setState({
-      current_programs: programs,
+      currentPrograms: programs,
     })
   }
   
   onActivateNextProgram(program) {
-    var programs = this.state.next_programs
+    var programs = this.state.nextPrograms
     programs[program] = 255
     this.setState({
-      next_programs: programs,
+      nextPrograms: programs,
     })
   }
 
   onActivateCurrentProgram(program) {
-    var programs = this.state.current_programs
+    var programs = this.state.currentPrograms
     programs[program] = 255
     this.setState({
-      current_programs: programs,
+      currentPrograms: programs,
     })
   }
   
@@ -127,7 +127,7 @@ class ShowView extends Component {
   
   onPanicMode(programs) {
     this.setState({
-      current_programs: programs
+      currentPrograms: programs
     })
   }
   render() {
@@ -137,7 +137,7 @@ class ShowView extends Component {
         <div className="col-md-3 ">
           <div className="list-group schedule-scenes">
             <ProgramView 
-              active={this.state.active_scene} 
+              active={this.state.activeScene} 
               scenes={this.props.schedule.schedule}
               onSceneChange={this.handleSceneChange}
               
@@ -151,15 +151,15 @@ class ShowView extends Component {
         </div>
         <div className="col-md-3">
           <SceneView 
-            programs={this.state.next_programs} 
-            scene_lookup="next"
+            programs={this.state.nextPrograms} 
+            sceneLookup="next"
             onNextScene={this.handleNextScene}
             onIntensityChange={this.onNextSceneIntensity.bind(this)}
             onProgramDelete={this.onNextProgramDelete.bind(this)}/>
         </div>
         <div className="col-md-4">
           <SceneView
-            programs={this.state.current_programs}
+            programs={this.state.currentPrograms}
             onIntensityChange={this.onCurrentSceneIntensity.bind(this)}
             onProgramDelete={this.onCurrentProgramDelete.bind(this)}/>
         </div>
@@ -250,15 +250,15 @@ class QuickProgramPicker extends Component {
   
   render() {
     var programs = []
-    for (var program_name in this.props.programs){
+    for (var programName in this.props.programs){
       programs.push(<QuickProgram 
-        key={program_name} 
-        name={program_name} 
+        key={programName} 
+        name={programName} 
         color='danger'
         onActivateProgram={this.activateProgram.bind(this)}/>)
     };
-    for (var program_name in this.props.groups){
-      programs.push(<QuickProgram key={program_name} name={program_name} 
+    for (programName in this.props.groups){
+      programs.push(<QuickProgram key={programName} name={programName} 
         onActivateProgram={this.activateProgram.bind(this)}
         color='success'/>)
     };
@@ -290,12 +290,25 @@ class SceneViewItem extends Component {
     )
   }
 }
+
+class EmptySceneView extends Component {
+  render() {
+    return ( <div className="panel panel-info">
+        <div className="panel-heading">Darkness
+        </div>
+        <div className="panel-body">
+          All lights are off!
+        </div>
+      </div>
+    )
+  }
+}
 // Shows a list of programs in a scene
 class SceneView extends Component {
   render() {
     var header;
     var programs=[]
-    if (this.props.scene_lookup === "next") {
+    if (this.props.sceneLookup === "next") {
       header =  (
         <h1>Next scene <GoButton onNextScene={this.props.onNextScene}/></h1>
       );
@@ -312,6 +325,12 @@ class SceneView extends Component {
           onProgramDelete={this.props.onProgramDelete}
           name={key} key={key} 
           intensity={intensity}/>
+      )
+    }
+    console.log(this.props.programs.length)
+    if (programs.length == 0) {
+      programs = (
+        <EmptySceneView/>
       )
     }
     return (
@@ -371,7 +390,6 @@ class BeatButton extends Component {
   }
   
   blink() {
-    console.log("BLINK")
     this.setState({blinkClass: "btn-blink"})
     setTimeout(function() {
       this.setState({blinkClass: ""})
