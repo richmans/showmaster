@@ -26,6 +26,10 @@ button#button-go {
 div.beat {
   margin-bottom:60px;
 }
+
+div.beat button.btn-blink { 
+  background-color:#ffa95a;
+}
 div.quick-programs span.label {
   margin-right:5px;
   padding:5px;
@@ -45,6 +49,10 @@ div.quick-programs button {
   padding:5px;
   margin-right:5px;
   cursor:pointer;
+}
+
+div.global-controls {
+  padding-top:100px;
 }
 
 div.loading {

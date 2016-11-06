@@ -125,6 +125,11 @@ class ShowView extends Component {
     }
   }
   
+  onPanicMode(programs) {
+    this.setState({
+      current_programs: programs
+    })
+  }
   render() {
     return (
     <div className="container">
@@ -159,7 +164,8 @@ class ShowView extends Component {
             onProgramDelete={this.onCurrentProgramDelete.bind(this)}/>
         </div>
         <div className="col-md-2">
-          <GlobalControls/>
+          <GlobalControls
+            onPanicMode={this.onPanicMode.bind(this)}/>
         </div>
       </div>
     </div>
@@ -344,13 +350,60 @@ class IntensitySlider extends Component {
 class GlobalControls extends Component {
   render() {
     return (
-      <div>
+      <div className='global-controls'>
+       <BeatButton/>
+       <SafeModes onPanicMode={this.props.onPanicMode}/>
       </div>
     );
   }
 }
 
+class BeatButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      blinkClass: ""
+    }
+  }
+  
+  componentDidMount() {
+    setInterval(this.blink.bind(this), 1000)
+  }
+  
+  blink() {
+    console.log("BLINK")
+    this.setState({blinkClass: "btn-blink"})
+    setTimeout(function() {
+      this.setState({blinkClass: ""})
+    }.bind(this), 100)
+  }
+  
+  render() {
+    return ( 
+    <div className='beat'>
+      <button id="button-beat" type="button" className={"btn btn-primary " + this.state.blinkClass} aria-label="Left Align">
+        <span className="" aria-hidden="true">120 BPM</span>
+      </button>
+    </div>)
+  }
+}
+
+class SafeModes extends Component{
+  
+  render() {
+    return (
+      <div>
+        <p>Panic modes:</p>
+        <div className="btn-group" role="group" aria-label="...">
+          <button type="button" className="btn btn-warning" onClick={this.props.onPanicMode.bind(undefined, {"wit": 100})}>Failsafe</button>
+          <button type="button" className="btn btn-danger" onClick={this.props.onPanicMode.bind(undefined, {})}>Black</button>
+        </div>
+      </div>
+    )
+  }
+}
 class GoButton extends Component {
+
   render() {
     return (
       <span>
