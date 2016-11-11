@@ -1,5 +1,5 @@
 {
-	"format": "lightshow",
+	"format": "easylights",
 	"dmx": {
 		"address": "localhost:9090"
 	},

@@ -5,10 +5,9 @@ import '../css/bootstrap.min.css';
 import '../css/showoff.css';
 import '../css/slider.jquery.css';
 import $ from '../js/jquery.min.js';
-//import '../js/slider.jquery.min.js';
-//import '../js/bootstrap.min.js';
 
 var url="/programs/kvdnznstd_christmas.json";
+
 $(function() {
   $.get(url,function(data) {
     console.log(data)

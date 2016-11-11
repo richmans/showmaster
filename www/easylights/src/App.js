@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import $ from '../js/jquery.min.js';
+import io from '../js/socket.io.js';
 import slider from '../js/slider.jquery.js';
 
 //dirty hack around namespacing problem
@@ -10,7 +11,7 @@ class App extends Component {
     return (
       <div>
         <Navbar schedule={this.props.schedule}/>
-        <ShowView schedule={this.props.schedule}/>
+        <ShowView schedule={this.props.schedule} activePrograms={this.props.activePrograms}/>
       </div>
     );
   }
@@ -23,7 +24,7 @@ class Navbar extends Component {
       <div className='navbar navbar-default'>
         <div className="container-fluid">
           <div className="navbar-header">
-             <a className="navbar-brand" href="#">ShowMaster {this.props.schedule.format}</a>
+             <a className="navbar-brand" href="#">Dashboard {this.props.schedule.format}</a>
           </div>
         </div>
       </div>
@@ -38,11 +39,25 @@ class ShowView extends Component {
     this.state = {
       activeScene: 0,
       nextPrograms: Object.assign({}, this.props.schedule.schedule[0].programs),
-      currentPrograms: []
+      currentPrograms: {}
     };
-  
+    this.socket = io('http://localhost:3030');
     this.handleSceneChange = this.handleSceneChange.bind(this);
     this.handleNextScene= this.handleNextScene.bind(this)
+    
+    // Following code jiggles the current program around just as a test - to be removed
+    setInterval(function() {
+      if (this.state.currentPrograms.boo == 100) {
+        this.setState({currentPrograms: {boo: 200}})
+      } else {
+        this.setState({currentPrograms: {boo: 100}})
+      }
+    }.bind(this), 1000)
+    this.socket.on('input', function (data) {
+        console.log(data);
+        this.setState({currentPrograms: {boo:23}})
+    }.bind(this));
+    
   }
   
   handleNextScene() {
@@ -327,7 +342,6 @@ class SceneView extends Component {
           intensity={intensity}/>
       )
     }
-    console.log(this.props.programs.length)
     if (programs.length == 0) {
       programs = (
         <EmptySceneView/>

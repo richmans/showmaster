@@ -1,5 +1,5 @@
 {
-  "name": "showoff",
+  "name": "easylights",
   "version": "0.0.2",
   "description": "HTML/JS interface for showmaster",
   "author": "Richard Bronkhorst",
@@ -13,7 +13,6 @@
     "react-dom": "^15.3.2",
     "react-scripts": "0.7.0"
   },
-  "proxy": "http://localhost:3030/",
   "scripts": {
      "start": "react-scripts start",
      "build": "react-scripts build",
