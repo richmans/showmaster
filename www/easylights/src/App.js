@@ -44,18 +44,12 @@ class ShowView extends Component {
     this.socket = io('http://localhost:3030');
     this.handleSceneChange = this.handleSceneChange.bind(this);
     this.handleNextScene= this.handleNextScene.bind(this)
-    
-    // Following code jiggles the current program around just as a test - to be removed
-    setInterval(function() {
-      if (this.state.currentPrograms.boo == 100) {
-        this.setState({currentPrograms: {boo: 200}})
-      } else {
-        this.setState({currentPrograms: {boo: 100}})
+    this.socket.on('output', function (data) {
+      if (data.value == 0) {
+        this.onCurrentProgramDelete(data.port)
+      }else {
+        this.onCurrentSceneIntensity(data.port, data.value)
       }
-    }.bind(this), 1000)
-    this.socket.on('input', function (data) {
-        console.log(data);
-        this.setState({currentPrograms: {boo:23}})
     }.bind(this));
     
   }

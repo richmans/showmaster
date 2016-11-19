@@ -72,7 +72,7 @@
 		"disco": {
 			"type": "loop",
 			"fade": 0,
-			"steps": [
+			"subprograms": [
 				"rood",
 				"groen",
 				"blauw"
@@ -82,7 +82,7 @@
 		"rustig": {
 			"type": "loop",
 			"fade": 500,
-			"steps": [
+			"subprograms": [
 				"rood",
 				"groen",
 				"blauw"
@@ -90,13 +90,19 @@
 		},
 
 		"muz_intens": {
-			"disco": 255,
-			"wit": 100
+      "type": "set",
+      "subprograms": [
+  			"disco",
+  			"wit"
+      ]
 		},
 
 		"muz_rustig": {
-			"rustig": 150,
-			"wit": 50
+      "type": "set",
+      "subprograms": [
+        "rustig",
+			  "wit"
+      ]
 		}
 	},
 	"schedule": [{
