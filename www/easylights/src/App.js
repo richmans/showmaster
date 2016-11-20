@@ -3,6 +3,7 @@ import $ from '../js/jquery.min.js';
 import io from '../js/socket.io.js';
 import slider from '../js/slider.jquery.js';
 
+
 //dirty hack around namespacing problem
 slider($);
 
@@ -46,12 +47,35 @@ class ShowView extends Component {
     this.handleNextScene= this.handleNextScene.bind(this)
     this.socket.on('output', function (data) {
       if (data.value == 0) {
-        this.onCurrentProgramDelete(data.port)
+        this.deleteCurrentProgram(data.port, false)
       }else {
-        this.onCurrentSceneIntensity(data.port, data.value)
+        this.setCurrentSceneIntensity(data.port, data.value * 100, false)
       }
     }.bind(this));
     
+  }
+  
+  currentPrograms() {
+    return Object.assign({}, this.state.currentPrograms)
+  }
+  
+  sendProgramUpdate(program, value) {
+    var data = {"port": program, "value": value / 100}
+    console.log(data)
+    this.socket.emit("output", data)
+  }
+  
+  sendProgramUpdates(newPrograms) {
+    var mergedPrograms = Object.assign({}, this.state.currentPrograms, newPrograms)
+    console.log(mergedPrograms);
+    for(var program in mergedPrograms) {
+      var newValue = Math.round(newPrograms[program] || 0)
+      var oldValue = Math.round(this.state.currentPrograms[program] || 0)
+      if (oldValue != newValue) {
+        this.sendProgramUpdate(program, newValue)
+      }
+    }
+    this.setState({currentPrograms: newPrograms})
   }
   
   handleNextScene() {
@@ -59,9 +83,7 @@ class ShowView extends Component {
       console.log("End of schedule")
       return ;
     }
-    this.setState({
-      currentPrograms: this.state.nextPrograms
-    })
+    this.sendProgramUpdates(this.state.nextPrograms) 
     this.handleSceneChange(this.state.activeScene + 1)
     
   }
@@ -76,13 +98,20 @@ class ShowView extends Component {
     });
   }
   
-  onCurrentSceneIntensity(program, intensity) {
-    var programs = this.state.currentPrograms
+  setCurrentSceneIntensity(program, intensity, sendUpdates=true) {
+    var programs = this.currentPrograms()
+    console.log("ocsi", program,intensity, programs[program])
     if (programs[program] == intensity) return;
     programs[program] = intensity
-    this.setState({
-      currentPrograms: programs,
-    })
+    if (sendUpdates == true) {
+      this.sendProgramUpdates(programs)
+    }else {
+      this.setState({currentPrograms: programs})
+    }
+  }
+  
+  onCurrentSceneIntensity(program, intensity) {
+    this.setCurrentSceneIntensity(program,intensity,true)
   }
   
   onNextSceneIntensity(program, intensity) {
@@ -102,28 +131,35 @@ class ShowView extends Component {
     })
   }
   
-  onCurrentProgramDelete(program) {
-    var programs = this.state.currentPrograms
-    delete programs[program]
-    this.setState({
-      currentPrograms: programs,
-    })
+  deleteCurrentProgram(program, sendUpdates=true) {
+    var programs = this.currentPrograms()
+    delete programs[program]    
+    if (sendUpdates == true) {
+      console.log("Sending delete update")
+      this.sendProgramUpdates(programs)
+    }else {
+      this.setState({currentPrograms: programs})
+    }
   }
+  
+  onCurrentProgramDelete(program) {
+    this.deleteCurrentProgram(program, true)
+  }
+  
+  
   
   onActivateNextProgram(program) {
     var programs = this.state.nextPrograms
-    programs[program] = 255
+    programs[program] = 100
     this.setState({
       nextPrograms: programs,
     })
   }
 
   onActivateCurrentProgram(program) {
-    var programs = this.state.currentPrograms
-    programs[program] = 255
-    this.setState({
-      currentPrograms: programs,
-    })
+    var programs = this.currentPrograms()
+    programs[program] = 100
+    this.sendProgramUpdates(programs)
   }
   
   onActivateProgram(destination, program) {
@@ -135,9 +171,7 @@ class ShowView extends Component {
   }
   
   onPanicMode(programs) {
-    this.setState({
-      currentPrograms: programs
-    })
+    this.sendProgramUpdates(programs)
   }
   render() {
     return (
@@ -354,7 +388,7 @@ class IntensitySlider extends Component {
   componentDidMount() {
     this.slider = $(this.refs.intensitySlider).freshslider({
        step: 1,
-       max: 255,
+       max: 100,
        value: this.props.value,
        onchange: this.props.onChange
     });
@@ -394,7 +428,7 @@ class BeatButton extends Component {
   }
   
   componentDidMount() {
-    setInterval(this.blink.bind(this), 1000)
+    setInterval(this.blink.bind(this), 500)
   }
   
   blink() {
