@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import $ from '../js/jquery.min.js';
-import io from '../js/socket.io.js';
+import io from 'socket.io-client'
 import slider from '../js/slider.jquery.js';
 
 
@@ -46,7 +46,7 @@ class ShowView extends Component {
     this.handleSceneChange = this.handleSceneChange.bind(this);
     this.handleNextScene= this.handleNextScene.bind(this)
     this.socket.on('output', function (data) {
-      if (data.value == 0) {
+      if (data.value === 0) {
         this.deleteCurrentProgram(data.port, false)
       }else {
         this.setCurrentSceneIntensity(data.port, data.value * 100, false)
@@ -66,15 +66,15 @@ class ShowView extends Component {
   }
   
   sendProgramUpdates(newPrograms) {
-    var mergedPrograms = Object.assign({}, this.state.currentPrograms, newPrograms)
+    var mergedPrograms = Object.keys(this.state.currentPrograms).concat(Object.keys(newPrograms))
     console.log(mergedPrograms);
-    for(var program in mergedPrograms) {
+    mergedPrograms.forEach(function(program) {
       var newValue = Math.round(newPrograms[program] || 0)
       var oldValue = Math.round(this.state.currentPrograms[program] || 0)
-      if (oldValue != newValue) {
+      if (oldValue !== newValue) {
         this.sendProgramUpdate(program, newValue)
       }
-    }
+    }.bind(this))
     this.setState({currentPrograms: newPrograms})
   }
   
@@ -89,7 +89,7 @@ class ShowView extends Component {
   }
   
   handleSceneChange(activeScene) {
-    activeScene = parseInt(activeScene);
+    activeScene = parseInt(activeScene, 10);
     
     var programs = this.props.schedule.schedule[activeScene].programs
     this.setState({
@@ -101,9 +101,9 @@ class ShowView extends Component {
   setCurrentSceneIntensity(program, intensity, sendUpdates=true) {
     var programs = this.currentPrograms()
     console.log("ocsi", program,intensity, programs[program])
-    if (programs[program] == intensity) return;
+    if (programs[program] === intensity) return;
     programs[program] = intensity
-    if (sendUpdates == true) {
+    if (sendUpdates === true) {
       this.sendProgramUpdates(programs)
     }else {
       this.setState({currentPrograms: programs})
@@ -116,7 +116,7 @@ class ShowView extends Component {
   
   onNextSceneIntensity(program, intensity) {
     var programs = this.state.nextPrograms
-    if (programs[program] == intensity) return;
+    if (programs[program] === intensity) return;
     programs[program] = intensity
     this.setState({
       nextPrograms: programs,
@@ -134,7 +134,7 @@ class ShowView extends Component {
   deleteCurrentProgram(program, sendUpdates=true) {
     var programs = this.currentPrograms()
     delete programs[program]    
-    if (sendUpdates == true) {
+    if (sendUpdates === true) {
       console.log("Sending delete update")
       this.sendProgramUpdates(programs)
     }else {
@@ -163,7 +163,7 @@ class ShowView extends Component {
   }
   
   onActivateProgram(destination, program) {
-    if (destination == "next") {
+    if (destination === "next") {
       this.onActivateNextProgram(program)
     } else {
       this.onActivateCurrentProgram(program)
@@ -238,10 +238,10 @@ class ProgramSceneView extends Component {
 class ProgramView extends Component {
   render() {
     var scenes = []
-    
-    for(var key in this.props.scenes) {
+    var sceneKeys = Object.keys(this.props.scenes)
+    sceneKeys.forEach(function(key) {
       var scene = this.props.scenes[key];
-      var active = (this.props.active == key)? "active": "";
+      var active = (this.props.active === key)? "active": "";
       scenes.push(
         <ProgramSceneView 
            active={active} 
@@ -252,7 +252,7 @@ class ProgramView extends Component {
            onSceneChange={this.props.onSceneChange}
           />
       )
-    }
+    }.bind(this))
     return (
       <div>
         {scenes}
@@ -284,7 +284,7 @@ class QuickProgramPicker extends Component {
   
   swapDestination(newDestination) {
     this.setState( {
-      destination: (this.state.destination == "next") ? "current" : "next"
+      destination: (this.state.destination === "next") ? "current" : "next"
     })
   }
   
@@ -294,20 +294,22 @@ class QuickProgramPicker extends Component {
   
   render() {
     var programs = []
-    for (var programName in this.props.programs){
+    var programNames = Object.keys(this.props.programs)
+    programNames.forEach(function(programName){
       programs.push(<QuickProgram 
         key={programName} 
         name={programName} 
         color='danger'
         onActivateProgram={this.activateProgram.bind(this)}/>)
-    };
-    for (programName in this.props.groups){
+    }.bind(this));
+    var groupNames = Object.keys(this.props.groups)
+    groupNames.forEach(function(programName){
       programs.push(<QuickProgram key={programName} name={programName} 
         onActivateProgram={this.activateProgram.bind(this)}
         color='success'/>)
-    };
-    var destClass= (this.state.destination == "next") ? "btn-success" : "btn-danger"
-    var destText= (this.state.destination == "next") ? "Next" : "Current"
+    }.bind(this));
+    var destClass= (this.state.destination === "next") ? "btn-success" : "btn-danger"
+    var destText= (this.state.destination === "next") ? "Next" : "Current"
     return (
       <div className='quick-programs'>
         <h4>Quick Programs
@@ -361,7 +363,8 @@ class SceneView extends Component {
         <h1>Current Scene</h1>
       );
     }
-    for (var key in this.props.programs) {
+    var programKeys = Object.keys(this.props.programs)
+    programKeys.forEach(function(key) {
       var intensity = this.props.programs[key]
       programs.push(
         <SceneViewItem 
@@ -370,8 +373,8 @@ class SceneView extends Component {
           name={key} key={key} 
           intensity={intensity}/>
       )
-    }
-    if (programs.length == 0) {
+    }.bind(this))
+    if (programs.length === 0) {
       programs = (
         <EmptySceneView/>
       )
@@ -432,7 +435,7 @@ class BeatButton extends Component {
     this.props.socket.on("input", function(data) {
       var bpm = Math.round(data.value * 60 *20)
       this.setState({bpm: bpm})
-      if (data.port == "beat"){
+      if (data.port === "beat"){
         this.blink()
       }
     }.bind(this))
