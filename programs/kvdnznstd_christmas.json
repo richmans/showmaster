@@ -1,7 +1,8 @@
 {
 	"format": "easylights",
 	"dmx": {
-		"address": "localhost:9090"
+		"host": "localhost",
+    "port": 5120
 	},
 	"channels": {
 		"groen_la": 23,
