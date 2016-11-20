@@ -100,7 +100,6 @@ class ShowView extends Component {
   
   setCurrentSceneIntensity(program, intensity, sendUpdates=true) {
     var programs = this.currentPrograms()
-    console.log("ocsi", program,intensity, programs[program])
     if (programs[program] === intensity) return;
     programs[program] = intensity
     if (sendUpdates === true) {
