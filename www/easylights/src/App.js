@@ -208,6 +208,7 @@ class ShowView extends Component {
         </div>
         <div className="col-md-2">
           <GlobalControls
+            socket={this.socket}
             onPanicMode={this.onPanicMode.bind(this)}/>
         </div>
       </div>
@@ -412,7 +413,7 @@ class GlobalControls extends Component {
   render() {
     return (
       <div className='global-controls'>
-       <BeatButton/>
+       <BeatButton socket={this.props.socket}/>
        <SafeModes onPanicMode={this.props.onPanicMode}/>
       </div>
     );
@@ -428,7 +429,13 @@ class BeatButton extends Component {
   }
   
   componentDidMount() {
-    setInterval(this.blink.bind(this), 500)
+    this.props.socket.on("input", function(data) {
+      var bpm = Math.round(data.value * 60 *20)
+      this.setState({bpm: bpm})
+      if (data.port == "beat"){
+        this.blink()
+      }
+    }.bind(this))
   }
   
   blink() {
@@ -442,7 +449,7 @@ class BeatButton extends Component {
     return ( 
     <div className='beat'>
       <button id="button-beat" type="button" className={"btn btn-primary " + this.state.blinkClass} aria-label="Left Align">
-        <span className="" aria-hidden="true">120 BPM</span>
+      <span className="" aria-hidden="true">{this.state.bpm} BPM</span>
       </button>
     </div>)
   }
