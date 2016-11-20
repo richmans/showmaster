@@ -240,7 +240,8 @@ class ProgramView extends Component {
     var sceneKeys = Object.keys(this.props.scenes)
     sceneKeys.forEach(function(key) {
       var scene = this.props.scenes[key];
-      var active = (this.props.active === key)? "active": "";
+      // eslint-disable-next-line
+      var active = (this.props.active == key)? "active": "";
       scenes.push(
         <ProgramSceneView 
            active={active} 
@@ -283,7 +284,8 @@ class QuickProgramPicker extends Component {
   
   swapDestination(newDestination) {
     this.setState( {
-      destination: (this.state.destination === "next") ? "current" : "next"
+      // eslint-disable-next-line
+      destination: (this.state.destination == "next") ? "current" : "next"
     })
   }
   
