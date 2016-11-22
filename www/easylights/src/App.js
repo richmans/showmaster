@@ -46,6 +46,7 @@ class ShowView extends Component {
     this.handleSceneChange = this.handleSceneChange.bind(this);
     this.handleNextScene= this.handleNextScene.bind(this)
     this.socket.on('output', function (data) {
+      if (data.port === "beatTap") return true;
       if (data.value === 0) {
         this.deleteCurrentProgram(data.port, false)
       }else {
@@ -427,6 +428,7 @@ class GlobalControls extends Component {
 class BeatButton extends Component {
   constructor(props) {
     super(props);
+    this.previousTap = 0
     this.state = {
       blinkClass: ""
     }
@@ -440,8 +442,18 @@ class BeatButton extends Component {
         this.blink()
       }
     }.bind(this))
+    document.addEventListener("keypress", this.handleKeypress.bind(this), false);
   }
   
+  componentWillUnmount() {
+    document.removeEventListener("keypress", this.handleKeypress.bind(this), false);
+  }
+  
+  handleKeypress(event) {
+    if(event.which === 98) {
+      this.sendTap()
+    }
+  }
   blink() {
     this.setState({blinkClass: "btn-blink"})
     setTimeout(function() {
@@ -449,10 +461,21 @@ class BeatButton extends Component {
     }.bind(this), 100)
   }
   
+  sendTap() {
+    var currentDate = new Date()
+    var currentMillis = currentDate.getTime()
+    var interval = currentMillis - this.previousMillis
+    if (interval < 60000) {
+      var value = (1000 / interval) / 20  
+      this.props.socket.emit("output", {port: "beatTap", value: value})
+    }
+    this.previousMillis = currentMillis
+  }
+  
   render() {
     return ( 
     <div className='beat'>
-      <button id="button-beat" type="button" className={"btn btn-primary " + this.state.blinkClass} aria-label="Left Align">
+      <button onMouseDown={this.sendTap.bind(this)} id="button-beat" type="button" className={"btn btn-primary " + this.state.blinkClass} aria-label="Left Align">
       <span className="" aria-hidden="true">{this.state.bpm} BPM</span>
       </button>
     </div>)
