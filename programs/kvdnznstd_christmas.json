@@ -5,9 +5,9 @@
     "port": 5120
 	},
 	"channels": {
-		"groen_la": 23,
-		"rood_la": 22,
 		"blauw_la": 21,
+		"rood_la": 22,
+		"groen_la": 23,
 		"blauw_ra": 24,
 		"rood_ra": 25,
 		"groen_ra": 26,
