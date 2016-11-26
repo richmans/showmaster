@@ -8,6 +8,8 @@ lightshow.
 
 The goal is to have a service that runs on a computer with a DMX connector, that acts as a programmable DMX controller. 
 
+![Easylights controlpanel](screenshot.png?raw=true "The easylights control panel")
+
 ## Predefined devices
 Showmaster provides a number of predefined devices. 
 
