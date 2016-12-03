@@ -24,7 +24,7 @@ Showmaster provides a number of predefined devices.
 This work is licensed under the [MIT license](https://tldrlegal.com/license/mit-license)
 
 ## FTDI
-The ftdi driver is no longer called directly from the nodejs framework. Instead, showmaster uses the dmxMaster project to output dmx.
+The ftdi driver is no longer called directly from the nodejs framework. Instead, showmaster uses the [dmxMaster](https://github.com/richmans/dmxmaster) project to output dmx.
 
 ## API
 The api is used to manipulate the network that is being run by showmaster. This network consists of virtual devices. Each device has input ports and output ports. An output port can be connected up to an input port by creating a connection. So there are two types of resources: Devices and Connections. Each resource can be GETted, POSTed or DELETEd with the expected result.
@@ -46,7 +46,7 @@ Messages in the sockio have either 'input' or 'output' as the event name, and th
 
     { port: 'output1', value: 0.7457431142388481 }
     
-Look in www/js/main.js for examples on how to use this.
+Look in www/knobs for examples on how to use this.
 
 ## Installation
 Assuming you have nodejs installed on osx or linux:
